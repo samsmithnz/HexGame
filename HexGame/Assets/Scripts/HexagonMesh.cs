@@ -3,10 +3,20 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexagonMesh : MonoBehaviour
 {
-    private void Start()
+    public Material defaultMaterial;
+    public float radius = 1f; // Make radius configurable
+
+    private void Awake()
     {
         CreateHexagonMesh();
+        EnsureMaterial();
     }
+
+    //private void Start()
+    //{
+    //    CreateHexagonMesh();
+    //    EnsureMaterial();
+    //}
 
     private void CreateHexagonMesh()
     {
@@ -19,16 +29,16 @@ public class HexagonMesh : MonoBehaviour
         for (int i = 0; i < 6; i++)
         {
             float angle = i * 60f * Mathf.Deg2Rad;
-            vertices[i + 1] = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+            vertices[i + 1] = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
         }
         
         // Triangles (6 triangles from center to each edge)
         int[] triangles = new int[18];
         for (int i = 0; i < 6; i++)
         {
-            triangles[i * 3] = 0; // Center
-            triangles[i * 3 + 1] = i + 1;
-            triangles[i * 3 + 2] = (i + 1) % 6 + 1;
+            triangles[i * 3] = 0;
+            triangles[i * 3 + 1] = (i + 1) % 6 + 1;
+            triangles[i * 3 + 2] = i + 1;
         }
         
         // UV coordinates
@@ -49,5 +59,21 @@ public class HexagonMesh : MonoBehaviour
         mesh.RecalculateNormals();
         
         GetComponent<MeshFilter>().mesh = mesh;
+        Debug.Log("HexagonMesh: Mesh assigned with " + mesh.vertexCount + " vertices.");
+    }
+
+    private void EnsureMaterial()
+    {
+        MeshRenderer renderer = GetComponent<MeshRenderer>();
+        if (renderer.sharedMaterial == null)
+        {
+            if (defaultMaterial == null)
+            {
+                // Create a simple default material if not assigned
+                defaultMaterial = new Material(Shader.Find("Standard"));
+                defaultMaterial.color = Color.gray;
+            }
+            renderer.sharedMaterial = defaultMaterial;
+        }
     }
 }

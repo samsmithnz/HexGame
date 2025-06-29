@@ -39,31 +39,31 @@ public class CameraControl : MonoBehaviour
             move += new Vector3(1, 0, -1); // Right
         }
 
-        // Edge panning
-        Vector3 edgeMove = Vector3.zero;
-        Vector3 mousePos = Input.mousePosition;
-        if (mousePos.x <= edgeSize)
-        {
-            edgeMove += new Vector3(-1, 0, 1); // Pan left
-        }
-        if (mousePos.x >= Screen.width - edgeSize)
-        {
-            edgeMove += new Vector3(1, 0, -1); // Pan right
-        }
-        if (mousePos.y <= edgeSize)
-        {
-            edgeMove += new Vector3(-1, 0, -1); // Pan down
-        }
-        if (mousePos.y >= Screen.height - edgeSize)
-        {
-            edgeMove += new Vector3(1, 0, 1); // Pan up
-        }
+        //// Edge panning
+        //Vector3 edgeMove = Vector3.zero;
+        //Vector3 mousePos = Input.mousePosition;
+        //if (mousePos.x <= edgeSize)
+        //{
+        //    edgeMove += new Vector3(-1, 0, 1); // Pan left
+        //}
+        //if (mousePos.x >= Screen.width - edgeSize)
+        //{
+        //    edgeMove += new Vector3(1, 0, -1); // Pan right
+        //}
+        //if (mousePos.y <= edgeSize)
+        //{
+        //    edgeMove += new Vector3(-1, 0, -1); // Pan down
+        //}
+        //if (mousePos.y >= Screen.height - edgeSize)
+        //{
+        //    edgeMove += new Vector3(1, 0, 1); // Pan up
+        //}
 
-        if (edgeMove != Vector3.zero)
-        {
-            edgeMove.Normalize();
-            move += edgeMove * (panSpeed / moveSpeed); // Keep panning speed consistent
-        }
+        //if (edgeMove != Vector3.zero)
+        //{
+        //    edgeMove.Normalize();
+        //    move += edgeMove * (panSpeed / moveSpeed); // Keep panning speed consistent
+        //}
 
         if (move != Vector3.zero)
         {
