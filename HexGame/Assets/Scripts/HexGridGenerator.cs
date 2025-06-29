@@ -15,9 +15,13 @@ public class HexGridGenerator : MonoBehaviour
         foreach (Transform child in transform)
         {
             if (Application.isPlaying)
+            {
                 Destroy(child.gameObject);
+            }
             else
+            {
                 DestroyImmediate(child.gameObject);
+            }
         }
 
         // Correct hexagon tiling mathematics
