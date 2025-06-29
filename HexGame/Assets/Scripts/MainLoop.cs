@@ -5,7 +5,8 @@ public class MainLoop : MonoBehaviour
     public GameObject hexTilePrefab;
     public int width = 10;
     public int height = 10;
-    public float hexRadius = 1f;
+    [Header("Centralized Settings")]
+    public float hexRadius = 1f; // Central source of truth
 
     private void Start()
     {
@@ -14,7 +15,7 @@ public class MainLoop : MonoBehaviour
         gridGenerator.hexTilePrefab = hexTilePrefab;
         gridGenerator.width = width;
         gridGenerator.height = height;
-        gridGenerator.hexRadius = hexRadius;
+        gridGenerator.hexRadius = hexRadius; // Pass the centralized value
         gridGenerator.GenerateGrid();
     }
 }
