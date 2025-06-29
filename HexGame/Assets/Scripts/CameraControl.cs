@@ -1,13 +1,15 @@
 using UnityEngine;
 
 // Attach this script to your Camera GameObject
-public class Camera : MonoBehaviour
+public class CameraControl : MonoBehaviour
 {
     public float moveSpeed = 10f;
     public float panSpeed = 10f; // Speed for edge panning
     public int edgeSize = 20; // Pixels from edge to start panning
-    public Vector2 minBounds = new Vector2(-50, -50);
-    public Vector2 maxBounds = new Vector2(50, 50);
+    public float minX = -28f;
+    public float maxX = 0f;
+    public float minZ = -28f;
+    public float maxZ = 0f;
     public float isoAngle = 30f; // Degrees from ground
     public float isoRotation = 45f; // Yaw rotation for isometric view
 
@@ -66,13 +68,16 @@ public class Camera : MonoBehaviour
         if (move != Vector3.zero)
         {
             move.Normalize();
-            transform.position += move * moveSpeed * Time.deltaTime;
         }
 
-        // Clamp camera position to bounds
-        Vector3 pos = transform.position;
-        pos.x = Mathf.Clamp(pos.x, minBounds.x, maxBounds.x);
-        pos.z = Mathf.Clamp(pos.z, minBounds.y, maxBounds.y);
-        transform.position = pos;
+        // Calculate the new position
+        Vector3 newPos = transform.position + move * moveSpeed * Time.deltaTime;
+
+        // Clamp x and z to bounds, y always 10
+        newPos.x = Mathf.Clamp(newPos.x, minX, maxX);
+        newPos.z = Mathf.Clamp(newPos.z, minZ, maxZ);
+        newPos.y = 10f;
+
+        transform.position = newPos;
     }
 }
