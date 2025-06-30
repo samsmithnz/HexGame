@@ -19,6 +19,7 @@ public class HexDebug : MonoBehaviour
             Debug.Log($"Vertices: {meshFilter.mesh.vertexCount}");
             Debug.Log($"Triangles: {meshFilter.mesh.triangles.Length / 3}");
             Debug.Log($"Mesh Bounds: {meshFilter.mesh.bounds}");
+            Debug.Log($"Triangle Indices: [{string.Join(", ", meshFilter.mesh.triangles)}]");
         }
         else
         {
@@ -28,13 +29,6 @@ public class HexDebug : MonoBehaviour
         // Output the world position of this hex
         Debug.Log($"World Position: {transform.position}");
         Debug.Log($"Local Scale: {transform.localScale}");
-        
-        // Report HexagonMesh settings if available
-        if (hexagonMesh)
-        {
-            Debug.Log($"Generate Border: {hexagonMesh.generateBorder}");
-            Debug.Log($"Border Thickness: {hexagonMesh.borderThickness}");
-        }
         
         Debug.Log("=== END HEX DEBUG ===");
     }

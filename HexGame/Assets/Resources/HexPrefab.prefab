@@ -102,9 +102,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultMaterial: {fileID: 2100000, guid: 47f4c3ce7edf0fa40ab1b91c7b11682f, type: 2}
-  radius: 1
   generateBorder: 1
-  borderRadiusMultiplier: 1.1
+  borderThickness: 0.1
   borderMaterial: {fileID: 2100000, guid: 3e25851b46d96d5409e0e0dc840e90ba, type: 2}
 --- !u!114 &2644245612561792155
 MonoBehaviour:

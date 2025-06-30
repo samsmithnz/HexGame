@@ -7,7 +7,6 @@ public class HexGridGenerator : MonoBehaviour
     public int height = 10;
     [Header("Centralized Settings")]
     public float hexRadius = 1f; // ONLY place radius is defined
-    public float borderThickness = 0.1f;
 
     public void GenerateGrid()
     {
@@ -27,6 +26,7 @@ public class HexGridGenerator : MonoBehaviour
         // Correct hexagon tiling mathematics
         float horizontalSpacing = hexRadius * 1.5f;
         float verticalSpacing = hexRadius * Mathf.Sqrt(3f);
+        System.Random rand = new System.Random();
 
         for (int x = 0; x < width; x++)
         {
@@ -50,8 +50,14 @@ public class HexGridGenerator : MonoBehaviour
                 if (mesh != null)
                 {
                     mesh.SetRadius(hexRadius);
-                    mesh.borderThickness = borderThickness;
                     mesh.Regenerate();
+                }
+
+                // Randomly assign tile type (30% water, 70% grass)
+                HexTile hexTile = tile.GetComponent<HexTile>();
+                if (hexTile != null)
+                {
+                    hexTile.SetTileType(rand.NextDouble() < 0.3 ? HexTileType.Water : HexTileType.Grass);
                 }
             }
         }
