@@ -28,7 +28,7 @@ public class HexagonMesh : MonoBehaviour
 
     private void CreateSimpleHex(Mesh mesh)
     {
-        float height = hexRadius * Random.Range(0.1f, 0.2f); // 10-20% of radius
+        float height = hexRadius * 0.2f;// Random.Range(0.1f, 0.2f); // 10-20% of radius
         Vector3[] vertices = new Vector3[14];
         // Bottom center
         vertices[0] = Vector3.zero;
