@@ -7,6 +7,7 @@ public class MainLoop : MonoBehaviour
     public int height = 10;
     [Header("Centralized Settings")]
     public float hexRadius = 1f; // Central source of truth
+    public Material defaultMaterial;
 
     private void Start()
     {
@@ -16,6 +17,7 @@ public class MainLoop : MonoBehaviour
         gridGenerator.width = width;
         gridGenerator.height = height;
         gridGenerator.hexRadius = hexRadius; // Pass the centralized value
+        gridGenerator.defaultMaterial = defaultMaterial; // Pass the default material
         gridGenerator.GenerateGrid();
     }
 }

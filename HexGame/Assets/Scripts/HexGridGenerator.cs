@@ -7,6 +7,7 @@ public class HexGridGenerator : MonoBehaviour
     public int height = 10;
     [Header("Centralized Settings")]
     public float hexRadius = 1f; // ONLY place radius is defined
+    public Material defaultMaterial; // Add this to receive from MainLoop
 
     public void GenerateGrid()
     {
@@ -50,6 +51,7 @@ public class HexGridGenerator : MonoBehaviour
                 if (mesh != null)
                 {
                     mesh.SetRadius(hexRadius);
+                    mesh.defaultMaterial = defaultMaterial; // Pass the default material
                     mesh.Regenerate();
                 }
 

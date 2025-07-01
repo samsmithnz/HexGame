@@ -432,6 +432,7 @@ MonoBehaviour:
   width: 10
   height: 10
   hexRadius: 1
+  defaultMaterial: {fileID: 2100000, guid: 3e25851b46d96d5409e0e0dc840e90ba, type: 2}
 --- !u!4 &784380830
 Transform:
   m_ObjectHideFlags: 0
