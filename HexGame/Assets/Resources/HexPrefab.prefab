@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1983145929987875505}
   - component: {fileID: 2644245612561792155}
   - component: {fileID: 1246071398033076648}
+  - component: {fileID: 3184044957528307992}
   m_Layer: 0
   m_Name: HexPrefab
   m_TagString: Untagged
@@ -102,9 +103,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultMaterial: {fileID: 2100000, guid: 47f4c3ce7edf0fa40ab1b91c7b11682f, type: 2}
-  generateBorder: 1
-  borderThickness: 0.1
-  borderMaterial: {fileID: 2100000, guid: 3e25851b46d96d5409e0e0dc840e90ba, type: 2}
 --- !u!114 &2644245612561792155
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,6 +118,7 @@ MonoBehaviour:
   tileType: 0
   grassColor: {r: 0, g: 1, b: 0, a: 1}
   waterColor: {r: 0, g: 0, b: 1, a: 1}
+  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!114 &1246071398033076648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,5 +129,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a36f44d8c05214942b08601675cc3a15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3184044957528307992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2625415425177298279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d87a9d3e869e0114b8377bb36d68b670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
