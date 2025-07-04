@@ -55,11 +55,12 @@ public class HexGridGenerator : MonoBehaviour
                     mesh.Regenerate();
                 }
 
-                // Randomly assign tile type (30% water, 70% grass)
+                // Randomly assign tile color (30% blue, 70% green)
                 HexTile hexTile = tile.GetComponent<HexTile>();
                 if (hexTile != null)
                 {
-                    hexTile.SetTileType(rand.NextDouble() < 0.3 ? HexTileType.Water : HexTileType.Grass);
+                    HexColor color = rand.NextDouble() < 0.3 ? HexColor.Blue : HexColor.Green;
+                    hexTile.SetHexColor(color, 0); // 0 armies by default
                 }
             }
         }

@@ -41,8 +41,8 @@ public class HexSelectionManager : MonoBehaviour
 
     private void CreateInfoPanel()
     {
-        // Create Canvas if not present
-        Canvas canvas = FindObjectOfType<Canvas>();
+        // Only create a new Canvas if one does not already exist
+        Canvas canvas = FindFirstObjectByType<Canvas>();
         if (canvas == null)
         {
             GameObject canvasObj = new GameObject("HexInfoCanvas");
@@ -51,9 +51,15 @@ public class HexSelectionManager : MonoBehaviour
             canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
         }
-        // Create Panel
+        // Only create the info panel if it doesn't already exist
+        if (canvas.transform.Find("HexInfoPanel") != null)
+        {
+            infoPanel = canvas.transform.Find("HexInfoPanel").gameObject;
+            infoText = infoPanel.GetComponentInChildren<Text>();
+            return;
+        }
         infoPanel = new GameObject("HexInfoPanel");
-        infoPanel.transform.SetParent(canvas.transform);
+        infoPanel.transform.SetParent(canvas.transform, false);
         Image panelImage = infoPanel.AddComponent<Image>();
         panelImage.color = new Color(0, 0, 0, 0.5f);
         RectTransform panelRect = infoPanel.GetComponent<RectTransform>();
@@ -61,10 +67,10 @@ public class HexSelectionManager : MonoBehaviour
         panelRect.anchorMax = new Vector2(0, 1);
         panelRect.pivot = new Vector2(0, 1);
         panelRect.anchoredPosition = new Vector2(10, -10);
-        panelRect.sizeDelta = new Vector2(220, 60);
+        panelRect.sizeDelta = new Vector2(220, 80);
         // Create Text
         GameObject textObj = new GameObject("HexInfoText");
-        textObj.transform.SetParent(infoPanel.transform);
+        textObj.transform.SetParent(infoPanel.transform, false);
         infoText = textObj.AddComponent<Text>();
         infoText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
         infoText.fontSize = 16;
@@ -81,7 +87,8 @@ public class HexSelectionManager : MonoBehaviour
     private void UpdateInfoPanel(HexTile tile)
     {
         string coords = tile.name;
-        string type = tile.tileType.ToString();
-        infoText.text = $"Tile: {coords}\nType: {type}";
+        string color = tile.hexColor.ToString();
+        int armies = tile.armyCount;
+        infoText.text = $"Tile: {coords}\nColor: {color}\nArmies: {armies}";
     }
 }

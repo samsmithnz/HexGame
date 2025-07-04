@@ -1,19 +1,16 @@
 using UnityEngine;
 
-public enum HexTileType
-{
-    Grass,
-    Water
-}
-
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Collider))]
 public class HexTile : MonoBehaviour
 {
-    public HexTileType tileType = HexTileType.Grass;
-    public Color grassColor = Color.green;
-    public Color waterColor = Color.blue;
+    public HexColor hexColor = HexColor.None;
+    public Color noneColor = Color.gray;
+    public Color blueColor = Color.blue;
+    public Color greenColor = Color.green;
     public Color highlightColor = Color.yellow;
+
+    public int armyCount = 0;
 
     private Renderer rend;
     private Color originalColor;
@@ -22,16 +19,16 @@ public class HexTile : MonoBehaviour
     {
         rend = GetComponent<Renderer>();
         UpdateTileAppearance();
-        // Ensure a collider exists for selection
         if (GetComponent<Collider>() == null)
         {
             gameObject.AddComponent<MeshCollider>();
         }
     }
 
-    public void SetTileType(HexTileType type)
+    public void SetHexColor(HexColor color, int armies)
     {
-        tileType = type;
+        hexColor = color;
+        armyCount = armies;
         UpdateTileAppearance();
     }
 
@@ -41,15 +38,19 @@ public class HexTile : MonoBehaviour
         {
             rend = GetComponent<Renderer>();
         }
-        switch (tileType)
+        switch (hexColor)
         {
-            case HexTileType.Grass:
-                originalColor = grassColor;
-                rend.material.color = grassColor;
+            case HexColor.Blue:
+                originalColor = blueColor;
+                rend.material.color = blueColor;
                 break;
-            case HexTileType.Water:
-                originalColor = waterColor;
-                rend.material.color = waterColor;
+            case HexColor.Green:
+                originalColor = greenColor;
+                rend.material.color = greenColor;
+                break;
+            default:
+                originalColor = noneColor;
+                rend.material.color = noneColor;
                 break;
         }
     }
@@ -65,10 +66,6 @@ public class HexTile : MonoBehaviour
 
     public void RestoreColor()
     {
-        if (rend == null)
-        {
-            rend = GetComponent<Renderer>();
-        }
-        rend.material.color = originalColor;
+        UpdateTileAppearance();
     }
 }
