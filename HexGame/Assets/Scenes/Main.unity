@@ -462,8 +462,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentPlayer: 1
-  blueArmies: 0
-  greenArmies: 0
+  blueArmies: 1
+  greenArmies: 1
+  turn: 1
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

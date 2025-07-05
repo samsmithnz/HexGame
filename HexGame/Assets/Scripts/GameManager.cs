@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     private Text turnText;
     private Text armiesText;
     private Button nextTurnButton;
+    private Button helpButton;
+    private GameObject helpPopup;
 
     private List<HexTile> allTiles = new List<HexTile>();
     private GameObject armyPrefab;
@@ -32,6 +34,15 @@ public class GameManager : MonoBehaviour
         AwardInitialArmies();
         UpdateAllArmyVisuals();
         UpdateUI();
+    }
+
+    void Update()
+    {
+        // Close help popup with ESC key
+        if (Input.GetKeyDown(KeyCode.Escape) && helpPopup != null && helpPopup.activeInHierarchy)
+        {
+            CloseHelpPopup();
+        }
     }
 
     private void FindAllTiles()
@@ -192,6 +203,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ShowHelpPopup()
+    {
+        if (helpPopup != null)
+        {
+            helpPopup.SetActive(true);
+        }
+    }
+
+    public void CloseHelpPopup()
+    {
+        if (helpPopup != null)
+        {
+            helpPopup.SetActive(false);
+        }
+    }
+
     private void CreateGameUI()
     {
         // Always create a dedicated canvas for the GameManager UI if it doesn't exist
@@ -204,12 +231,20 @@ public class GameManager : MonoBehaviour
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
+            // Add EventSystem if not present
+            if (FindObjectsByType<UnityEngine.EventSystems.EventSystem>(FindObjectsSortMode.None).Length == 0)
+            {
+                GameObject es = new GameObject("EventSystem");
+                es.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                es.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
         }
         else
         {
             canvas = canvasObj.GetComponent<Canvas>();
         }
-        // Panel
+        
+        // Main Game Panel (Top Right)
         uiPanel = new GameObject("TurnPanel");
         uiPanel.transform.SetParent(canvas.transform, false);
         Image panelImage = uiPanel.AddComponent<Image>();
@@ -220,6 +255,7 @@ public class GameManager : MonoBehaviour
         panelRect.pivot = new Vector2(1, 1);     // Top right
         panelRect.anchoredPosition = new Vector2(-10, -10); // 10px from top right
         panelRect.sizeDelta = new Vector2(260, 160); // Increased height for more vertical space
+        
         // Turn Text
         GameObject turnObj = new GameObject("TurnText");
         turnObj.transform.SetParent(uiPanel.transform, false);
@@ -234,6 +270,7 @@ public class GameManager : MonoBehaviour
         turnRect.pivot = new Vector2(0, 1);
         turnRect.anchoredPosition = new Vector2(10, -10);
         turnRect.sizeDelta = new Vector2(-20, 30);
+        
         // Armies Text
         GameObject armiesObj = new GameObject("ArmiesText");
         armiesObj.transform.SetParent(uiPanel.transform, false);
@@ -248,6 +285,7 @@ public class GameManager : MonoBehaviour
         armiesRect.pivot = new Vector2(0, 1);
         armiesRect.anchoredPosition = new Vector2(10, -45); // Move down for more space
         armiesRect.sizeDelta = new Vector2(-20, 60); // Increased height for more lines
+        
         // Next Turn Button
         GameObject buttonObj = new GameObject("NextTurnButton");
         buttonObj.transform.SetParent(uiPanel.transform, false);
@@ -260,7 +298,8 @@ public class GameManager : MonoBehaviour
         btnRect.pivot = new Vector2(0.5f, 0);
         btnRect.anchoredPosition = new Vector2(0, 10);
         btnRect.sizeDelta = new Vector2(-20, 30);
-        // Button Text
+        
+        // Next Turn Button Text
         GameObject btnTextObj = new GameObject("ButtonText");
         btnTextObj.transform.SetParent(buttonObj.transform, false);
         Text btnText = btnTextObj.AddComponent<Text>();
@@ -275,6 +314,149 @@ public class GameManager : MonoBehaviour
         btnTextRect.offsetMin = Vector2.zero;
         btnTextRect.offsetMax = Vector2.zero;
         nextTurnButton.onClick.AddListener(NextTurn);
+
+        // Help Button (Bottom Left)
+        GameObject helpButtonObj = new GameObject("HelpButton");
+        helpButtonObj.transform.SetParent(canvas.transform, false);
+        helpButton = helpButtonObj.AddComponent<Button>();
+        Image helpBtnImage = helpButtonObj.AddComponent<Image>();
+        helpBtnImage.color = new Color(0.2f, 0.6f, 1f, 1f); // Light blue color
+        RectTransform helpBtnRect = helpButtonObj.GetComponent<RectTransform>();
+        helpBtnRect.anchorMin = new Vector2(0, 0); // Bottom left
+        helpBtnRect.anchorMax = new Vector2(0, 0); // Bottom left
+        helpBtnRect.pivot = new Vector2(0, 0);     // Bottom left
+        helpBtnRect.anchoredPosition = new Vector2(10, 10); // 10px from bottom left
+        helpBtnRect.sizeDelta = new Vector2(60, 30);
+        
+        // Help Button Text
+        GameObject helpBtnTextObj = new GameObject("HelpButtonText");
+        helpBtnTextObj.transform.SetParent(helpButtonObj.transform, false);
+        Text helpBtnText = helpBtnTextObj.AddComponent<Text>();
+        helpBtnText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        helpBtnText.fontSize = 14;
+        helpBtnText.color = Color.white;
+        helpBtnText.alignment = TextAnchor.MiddleCenter;
+        helpBtnText.text = "Help";
+        RectTransform helpBtnTextRect = helpBtnText.GetComponent<RectTransform>();
+        helpBtnTextRect.anchorMin = Vector2.zero;
+        helpBtnTextRect.anchorMax = Vector2.one;
+        helpBtnTextRect.offsetMin = Vector2.zero;
+        helpBtnTextRect.offsetMax = Vector2.zero;
+        helpButton.onClick.AddListener(ShowHelpPopup);
+
+        // Help Popup - Make it clickable background overlay but not full screen content
+        helpPopup = new GameObject("HelpPopup");
+        helpPopup.transform.SetParent(canvas.transform, false);
+        Button popupBgButton = helpPopup.AddComponent<Button>(); // Make background clickable to close
+        Image popupBg = helpPopup.AddComponent<Image>();
+        popupBg.color = new Color(0, 0, 0, 0.5f); // Semi-transparent overlay
+        RectTransform popupRect = helpPopup.GetComponent<RectTransform>();
+        popupRect.anchorMin = Vector2.zero;
+        popupRect.anchorMax = Vector2.one;
+        popupRect.offsetMin = Vector2.zero;
+        popupRect.offsetMax = Vector2.zero;
+        popupBgButton.onClick.AddListener(CloseHelpPopup); // Close when clicking background
+
+        // Help Content Panel - Centered and reasonably sized
+        GameObject contentPanel = new GameObject("HelpContentPanel");
+        contentPanel.transform.SetParent(helpPopup.transform, false);
+        Image contentBg = contentPanel.AddComponent<Image>();
+        contentBg.color = new Color(0.1f, 0.1f, 0.1f, 0.95f);
+        RectTransform contentRect = contentPanel.GetComponent<RectTransform>();
+        contentRect.anchorMin = new Vector2(0.15f, 0.15f); // Smaller centered window
+        contentRect.anchorMax = new Vector2(0.85f, 0.85f); // Smaller centered window
+        contentRect.offsetMin = Vector2.zero;
+        contentRect.offsetMax = Vector2.zero;
+
+        // Help Title
+        GameObject titleObj = new GameObject("HelpTitle");
+        titleObj.transform.SetParent(contentPanel.transform, false);
+        Text titleText = titleObj.AddComponent<Text>();
+        titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        titleText.fontSize = 24;
+        titleText.color = Color.white;
+        titleText.alignment = TextAnchor.MiddleCenter;
+        titleText.text = "Game Rules";
+        RectTransform titleRect = titleText.GetComponent<RectTransform>();
+        titleRect.anchorMin = new Vector2(0, 0.9f);
+        titleRect.anchorMax = new Vector2(1, 1);
+        titleRect.offsetMin = new Vector2(10, -10);
+        titleRect.offsetMax = new Vector2(-10, -10);
+
+        // Help Content Text (no scroll view)
+        GameObject helpTextObj = new GameObject("HelpText");
+        helpTextObj.transform.SetParent(contentPanel.transform, false);
+        Text helpText = helpTextObj.AddComponent<Text>();
+        helpText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        helpText.fontSize = 16;
+        helpText.color = Color.white;
+        helpText.alignment = TextAnchor.UpperLeft;
+        helpText.text = "HEX GAME RULES:\n\n" +
+                       "OBJECTIVE:\n" +
+                       "• Control territories and build armies\n\n" +
+                       "GAMEPLAY:\n" +
+                       "• Two players: Blue and Green\n" +
+                       "• Blue player always goes first\n" +
+                       "• Turn counter increases when Blue's turn begins\n\n" +
+                       "ARMIES:\n" +
+                       "• Each player starts with 1 army on each tile they control\n" +
+                       "• At the start of each turn, gain 1 army per tile you control\n" +
+                       "• Armies are represented by colored cylinders on tiles\n\n" +
+                       "CONTROLS:\n" +
+                       "• Click on tiles to select and view information\n" +
+                       "• Use 'Next Turn' button to end your turn\n" +
+                       "• Press ESC or click Close to exit this help\n\n" +
+                       "CAMERA:\n" +
+                       "• WASD keys to move camera around the map\n\n" +
+                       "TILE INFORMATION:\n" +
+                       "• Selected tile info appears in top-left panel\n" +
+                       "• Shows tile coordinates, color, and army count\n\n" +
+                       "VISUAL INDICATORS:\n" +
+                       "• Blue tiles belong to Blue player\n" +
+                       "• Green tiles belong to Green player\n" +
+                       "• Gray tiles are neutral (none)\n" +
+                       "• Yellow highlight shows selected tile\n" +
+                       "• Small cylinders represent armies on tiles\n\n" +
+                       "GAME STATUS:\n" +
+                       "• Current turn and active player shown in top-right\n" +
+                       "• Total army count displayed for each player\n" +
+                       "• Turn advances when Next Turn button is clicked";
+        RectTransform helpTextRect = helpText.GetComponent<RectTransform>();
+        helpTextRect.anchorMin = new Vector2(0, 0);
+        helpTextRect.anchorMax = new Vector2(1, 0.85f);
+        helpTextRect.offsetMin = new Vector2(20, 10);
+        helpTextRect.offsetMax = new Vector2(-20, -10);
+
+        // Close Button
+        GameObject closeButtonObj = new GameObject("CloseButton");
+        closeButtonObj.transform.SetParent(contentPanel.transform, false);
+        Button closeButton = closeButtonObj.AddComponent<Button>();
+        Image closeBtnImage = closeButtonObj.AddComponent<Image>();
+        closeBtnImage.color = new Color(0.8f, 0.2f, 0.2f, 1f);
+        RectTransform closeBtnRect = closeButtonObj.GetComponent<RectTransform>();
+        closeBtnRect.anchorMin = new Vector2(0.4f, 0.02f);
+        closeBtnRect.anchorMax = new Vector2(0.6f, 0.08f);
+        closeBtnRect.offsetMin = Vector2.zero;
+        closeBtnRect.offsetMax = Vector2.zero;
+        
+        // Close Button Text
+        GameObject closeBtnTextObj = new GameObject("CloseButtonText");
+        closeBtnTextObj.transform.SetParent(closeButtonObj.transform, false);
+        Text closeBtnText = closeBtnTextObj.AddComponent<Text>();
+        closeBtnText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        closeBtnText.fontSize = 16;
+        closeBtnText.color = Color.white;
+        closeBtnText.alignment = TextAnchor.MiddleCenter;
+        closeBtnText.text = "Close";
+        RectTransform closeBtnTextRect = closeBtnText.GetComponent<RectTransform>();
+        closeBtnTextRect.anchorMin = Vector2.zero;
+        closeBtnTextRect.anchorMax = Vector2.one;
+        closeBtnTextRect.offsetMin = Vector2.zero;
+        closeBtnTextRect.offsetMax = Vector2.zero;
+        closeButton.onClick.AddListener(CloseHelpPopup);
+
+        // Start with help popup hidden
+        helpPopup.SetActive(false);
     }
 
     private void UpdateUI()
