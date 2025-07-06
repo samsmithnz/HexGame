@@ -29,7 +29,22 @@ public class GameManager : MonoBehaviour
         turn = 1;
         currentPlayer = HexColor.Blue;
         CreateGameUI();
+    }
+
+    void Start()
+    {
+        // Add a small delay to ensure grid generation completes first
+        StartCoroutine(InitializeGameManagerAfterDelay());
+    }
+
+    private System.Collections.IEnumerator InitializeGameManagerAfterDelay()
+    {
+        // Wait one frame to ensure MainLoop.Start() has completed
+        yield return null;
+        
+        // Move tile-dependent initialization to Start() to ensure grid is generated first
         FindAllTiles();
+        Debug.Log($"Found {allTiles.Count} tiles after grid generation");
         CreateArmyPrefab();
         AwardInitialArmies();
         UpdateAllArmyVisuals();
@@ -48,7 +63,26 @@ public class GameManager : MonoBehaviour
     private void FindAllTiles()
     {
         allTiles.Clear();
-        allTiles.AddRange(FindObjectsByType<HexTile>(FindObjectsSortMode.None));
+        // Use the Unity 6+ API to find all HexTile components, including inactive ones
+        allTiles.AddRange(Object.FindObjectsByType<HexTile>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+        Debug.Log($"FindAllTiles found {allTiles.Count} HexTile components");
+        
+        // Additional debug: check what objects exist in the scene
+        var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Debug.Log($"Total GameObjects in scene: {allGameObjects.Length}");
+        
+        // Check specifically for objects with HexTile_ in their name
+        int hexTileNamedObjects = 0;
+        foreach (var go in allGameObjects)
+        {
+            if (go.name.Contains("HexTile_"))
+            {
+                hexTileNamedObjects++;
+                var hexTileComponent = go.GetComponent<HexTile>();
+                Debug.Log($"Found {go.name} - HexTile component: {(hexTileComponent != null ? "YES" : "NO")}");
+            }
+        }
+        Debug.Log($"Found {hexTileNamedObjects} objects with 'HexTile_' in name");
     }
 
     private void CreateArmyPrefab()
@@ -201,7 +235,7 @@ public class GameManager : MonoBehaviour
             GameObject army = Instantiate(armyPrefab, tile.transform);
             army.name = "ArmyVisual" + i;
             army.transform.localPosition = pos;
-            army.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+            army.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             // Assign a unique material instance for color
             Renderer renderer = army.GetComponent<Renderer>();
             renderer.material = new Material(renderer.material);
