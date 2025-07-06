@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HexSelectionManager : MonoBehaviour
 {
     private HexTile selectedTile;
+    private List<HexTile> highlightedTiles = new List<HexTile>();
     private static HexSelectionManager instance;
 
     // UI
@@ -27,16 +29,133 @@ public class HexSelectionManager : MonoBehaviour
                 HexTile tile = hit.collider.GetComponent<HexTile>();
                 if (tile != null)
                 {
-                    if (selectedTile != null && selectedTile != tile)
+                    // If clicking a highlighted attack tile, perform attack
+                    if (highlightedTiles.Contains(tile))
                     {
-                        selectedTile.RestoreColor();
+                        AttackTile(tile);
+                        return;
                     }
-                    tile.Highlight();
-                    selectedTile = tile;
-                    UpdateInfoPanel(tile);
+
+                    // Only allow selecting a tile if:
+                    // - It is owned by the current player
+                    // - It has 2 or more armies
+                    if (tile.hexColor == GameManager.Instance.currentPlayer && tile.armyCount >= 2)
+                    {
+                        // Clear previous selection and highlights
+                        if (selectedTile != null)
+                        {
+                            selectedTile.RestoreColor();
+                        }
+                        ClearHighlights();
+                        
+                        // Select new tile
+                        tile.Highlight();
+                        selectedTile = tile;
+                        UpdateInfoPanel(tile);
+                        HighlightAttackableNeighbors(tile);
+                    }
+                    else
+                    {
+                        // Deselect if clicking an invalid tile
+                        if (selectedTile != null)
+                        {
+                            selectedTile.RestoreColor();
+                            selectedTile = null;
+                        }
+                        ClearHighlights();
+                        UpdateInfoPanel(tile);
+                    }
                 }
             }
         }
+    }
+
+    private void HighlightAttackableNeighbors(HexTile tile)
+    {
+        // Find neighbors using tile grid positions
+        List<HexTile> neighbors = GetNeighbors(tile);
+        foreach (HexTile neighbor in neighbors)
+        {
+            // Highlight if unowned or owned by opponent
+            if (neighbor.hexColor == HexColor.None || neighbor.hexColor != GameManager.Instance.currentPlayer)
+            {
+                neighbor.HighlightAttack();
+                highlightedTiles.Add(neighbor);
+            }
+        }
+    }
+
+    private void ClearHighlights()
+    {
+        foreach (HexTile tile in highlightedTiles)
+        {
+            tile.RestoreColor();
+        }
+        highlightedTiles.Clear();
+    }
+
+    private List<HexTile> GetNeighbors(HexTile tile)
+    {
+        List<HexTile> neighbors = new List<HexTile>();
+        // Parse tile name as HexTile_x_y
+        string[] parts = tile.name.Split('_');
+        int x, y;
+        if (parts.Length == 3 && int.TryParse(parts[1], out x) && int.TryParse(parts[2], out y))
+        {
+            // Use correct neighbor offsets for even-q vertical layout
+            (int dx, int dy)[] evenOffsets = new (int, int)[] { (1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, -1) };
+            (int dx, int dy)[] oddOffsets = new (int, int)[] { (1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1) };
+            (int dx, int dy)[] neighborOffsets = (x % 2 == 0) ? evenOffsets : oddOffsets;
+            foreach ((int dx, int dy) in neighborOffsets)
+            {
+                int nx = x + dx;
+                int ny = y + dy;
+                string neighborName = $"HexTile_{nx}_{ny}";
+                foreach (HexTile t in GameManager.Instance.GetAllTiles())
+                {
+                    if (t.name == neighborName)
+                    {
+                        neighbors.Add(t);
+                        break;
+                    }
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    private void AttackTile(HexTile target)
+    {
+        if (selectedTile == null)
+        {
+            return;
+        }
+        
+        // Move all but one army to the target
+        int movingArmies = selectedTile.armyCount - 1;
+        if (movingArmies < 1)
+        {
+            return;
+        }
+        
+        // Set target to current player with moving armies
+        target.SetHexColor(GameManager.Instance.currentPlayer, movingArmies);
+        
+        // Leave one army on source
+        selectedTile.armyCount = 1;
+        selectedTile.UpdateTileAppearance();
+        
+        // Update visuals and UI
+        GameManager.Instance.CallUpdateAllArmyVisuals();
+        GameManager.Instance.CallUpdateUI();
+        
+        // Deselect and clear highlights
+        selectedTile.RestoreColor();
+        selectedTile = null;
+        ClearHighlights();
+        
+        // Update info panel
+        UpdateInfoPanel(target);
     }
 
     private void CreateInfoPanel()

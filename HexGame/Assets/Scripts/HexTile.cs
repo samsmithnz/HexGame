@@ -9,6 +9,7 @@ public class HexTile : MonoBehaviour
     public Color blueColor = Color.blue;
     public Color greenColor = Color.green;
     public Color highlightColor = Color.yellow;
+    public Color attackHighlightColor = new Color(1.0f, 0.5f, 0.0f, 1.0f); // Orange
 
     public int armyCount = 0;
 
@@ -62,6 +63,15 @@ public class HexTile : MonoBehaviour
             rend = GetComponent<Renderer>();
         }
         rend.material.color = highlightColor;
+    }
+
+    public void HighlightAttack()
+    {
+        if (rend == null)
+        {
+            rend = GetComponent<Renderer>();
+        }
+        rend.material.color = attackHighlightColor;
     }
 
     public void RestoreColor()
