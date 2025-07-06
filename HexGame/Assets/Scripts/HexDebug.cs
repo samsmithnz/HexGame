@@ -4,9 +4,9 @@ public class HexDebug : MonoBehaviour
 {
     void Start()
     {
-        var meshFilter = GetComponent<MeshFilter>();
-        var meshRenderer = GetComponent<MeshRenderer>();
-        var hexagonMesh = GetComponent<HexagonMesh>();
+        MeshFilter meshFilter = GetComponent<MeshFilter>();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        HexagonMesh hexagonMesh = GetComponent<HexagonMesh>();
         
         Debug.Log($"=== HEX DEBUG: {gameObject.name} ===");
         Debug.Log("MeshFilter: " + (meshFilter ? "OK" : "Missing"));

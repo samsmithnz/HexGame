@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
     {
         blueArmies = 0;
         greenArmies = 0;
-        foreach (var tile in allTiles)
+        foreach (HexTile tile in allTiles)
         {
             tile.armyCount = 1;
             if (tile.hexColor == HexColor.Blue)
@@ -125,7 +125,7 @@ public class GameManager : MonoBehaviour
     private void AwardArmiesToCurrentPlayer()
     {
         int armiesAwarded = 0;
-        foreach (var tile in allTiles)
+        foreach (HexTile tile in allTiles)
         {
             if (tile.hexColor == currentPlayer)
             {
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateAllArmyVisuals()
     {
-        foreach (var tile in allTiles)
+        foreach (HexTile tile in allTiles)
         {
             PlaceArmyVisual(tile);
         }
@@ -167,11 +167,11 @@ public class GameManager : MonoBehaviour
         }
         // Get hex height (default to 0.2 if not found)
         float hexHeight = 0.2f;
-        var mesh = tile.GetComponent<HexagonMesh>();
+        HexagonMesh mesh = tile.GetComponent<HexagonMesh>();
         if (mesh != null)
         {
             // Try to get the private hexRadius via reflection (since it's private)
-            var radiusField = typeof(HexagonMesh).GetField("hexRadius", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            System.Reflection.FieldInfo radiusField = typeof(HexagonMesh).GetField("hexRadius", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (radiusField != null)
             {
                 float radius = (float)radiusField.GetValue(mesh);
@@ -203,7 +203,7 @@ public class GameManager : MonoBehaviour
             army.transform.localPosition = pos;
             army.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             // Assign a unique material instance for color
-            var renderer = army.GetComponent<Renderer>();
+            Renderer renderer = army.GetComponent<Renderer>();
             renderer.material = new Material(renderer.material);
             if (tile.hexColor == HexColor.Blue)
             {
@@ -480,7 +480,7 @@ public class GameManager : MonoBehaviour
         int blueTotalArmies = 0;
         int greenTotalArmies = 0;
         int noneTiles = 0;
-        foreach (var tile in allTiles)
+        foreach (HexTile tile in allTiles)
         {
             if (tile.hexColor == HexColor.Blue)
             {
