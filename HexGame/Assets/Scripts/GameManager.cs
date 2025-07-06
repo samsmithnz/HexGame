@@ -68,17 +68,17 @@ public class GameManager : MonoBehaviour
         Debug.Log($"FindAllTiles found {allTiles.Count} HexTile components");
         
         // Additional debug: check what objects exist in the scene
-        var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        GameObject[] allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Debug.Log($"Total GameObjects in scene: {allGameObjects.Length}");
         
         // Check specifically for objects with HexTile_ in their name
         int hexTileNamedObjects = 0;
-        foreach (var go in allGameObjects)
+        foreach (GameObject go in allGameObjects)
         {
             if (go.name.Contains("HexTile_"))
             {
                 hexTileNamedObjects++;
-                var hexTileComponent = go.GetComponent<HexTile>();
+                HexTile hexTileComponent = go.GetComponent<HexTile>();
                 Debug.Log($"Found {go.name} - HexTile component: {(hexTileComponent != null ? "YES" : "NO")}");
             }
         }
@@ -99,19 +99,110 @@ public class GameManager : MonoBehaviour
     {
         blueArmies = 0;
         greenArmies = 0;
+        // Set all tiles to blank
         foreach (HexTile tile in allTiles)
         {
-            tile.armyCount = 1;
-            if (tile.hexColor == HexColor.Blue)
+            tile.SetHexColor(HexColor.None, 0);
+        }
+
+        // Helper: get tile grid positions from names (assumes HexTile_x_y)
+        Dictionary<(int, int), HexTile> tileMap = new Dictionary<(int, int), HexTile>();
+        foreach (HexTile tile in allTiles)
+        {
+            string[] parts = tile.name.Split('_');
+            int x, y;
+            if (parts.Length == 3 && int.TryParse(parts[1], out x) && int.TryParse(parts[2], out y))
             {
-                blueArmies++;
-            }
-            else if (tile.hexColor == HexColor.Green)
-            {
-                greenArmies++;
+                tileMap[(x, y)] = tile;
             }
         }
-        UpdateAllArmyVisuals(); // Ensure visuals are created after initial armies
+        List<(int, int)> tileKeys = new List<(int, int)>(tileMap.Keys);
+        System.Random rand = new System.Random();
+
+        // Helper: get neighbors in axial/offset coordinates
+        (int dx, int dy)[] neighborOffsets = new (int, int)[] {
+            (1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1)
+        };
+
+        List<(int, int)> PickCluster(HashSet<(int, int)> exclude, int minDist = 2)
+        {
+            // Pick a random tile not in exclude, and not too close to any in exclude
+            List<(int, int)> candidates = new List<(int, int)>();
+            foreach ((int, int) key in tileKeys)
+            {
+                bool tooClose = false;
+                foreach ((int, int) ex in exclude)
+                {
+                    int dist = Mathf.Abs(key.Item1 - ex.Item1) + Mathf.Abs(key.Item2 - ex.Item2);
+                    if (dist < minDist)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+                if (!tooClose)
+                {
+                    candidates.Add(key);
+                }
+            }
+            if (candidates.Count == 0)
+            {
+                return null;
+            }
+            (int, int) start = candidates[rand.Next(candidates.Count)];
+            // BFS to get 3 connected tiles
+            List<(int, int)> cluster = new List<(int, int)> { start };
+            HashSet<(int, int)> visited = new HashSet<(int, int)> { start };
+            Queue<(int, int)> queue = new Queue<(int, int)>();
+            queue.Enqueue(start);
+            while (queue.Count > 0 && cluster.Count < 3)
+            {
+                (int, int) cur = queue.Dequeue();
+                foreach ((int dx, int dy) in neighborOffsets)
+                {
+                    (int, int) n = (cur.Item1 + dx, cur.Item2 + dy);
+                    if (tileMap.ContainsKey(n) && !visited.Contains(n))
+                    {
+                        cluster.Add(n);
+                        visited.Add(n);
+                        queue.Enqueue(n);
+                        if (cluster.Count == 3)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (cluster.Count == 3)
+            {
+                return cluster;
+            }
+            return null;
+        }
+
+        // Pick blue cluster
+        List<(int, int)> blueCluster = PickCluster(new HashSet<(int, int)>(), 3);
+        // Pick green cluster, not too close to blue
+        List<(int, int)> greenCluster = PickCluster(new HashSet<(int, int)>(blueCluster), 3);
+
+        // Assign tiles
+        if (blueCluster != null)
+        {
+            foreach ((int, int) pos in blueCluster)
+            {
+                tileMap[pos].SetHexColor(HexColor.Blue, 3);
+                blueArmies += 3;
+            }
+        }
+        if (greenCluster != null)
+        {
+            foreach ((int, int) pos in greenCluster)
+            {
+                tileMap[pos].SetHexColor(HexColor.Green, 3);
+                greenArmies += 3;
+            }
+        }
+        UpdateAllArmyVisuals();
     }
 
     public void AddArmies(HexColor player, int amount)
@@ -445,8 +536,10 @@ public class GameManager : MonoBehaviour
                        "• Two players: Blue and Green\n" +
                        "• Blue player always goes first\n" +
                        "• Turn counter increases when Blue's turn begins\n\n" +
+                       "STARTING SETUP:\n" +
+                       "• Each player starts with 3 adjacent tiles, each with 3 armies.\n" +
+                       "• All other tiles are blank.\n\n" +
                        "ARMIES:\n" +
-                       "• Each player starts with 1 army on each tile they control\n" +
                        "• At the start of each turn, gain 1 army per tile you control\n" +
                        "• Armies are represented by colored cylinders on tiles\n\n" +
                        "CONTROLS:\n" +

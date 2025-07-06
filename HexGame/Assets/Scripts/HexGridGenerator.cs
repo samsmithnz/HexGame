@@ -3,7 +3,7 @@ using UnityEngine;
 public class HexGridGenerator : MonoBehaviour
 {
     public GameObject hexTilePrefab;
-    public int width = 10;
+    public int width = 5;
     public int height = 10;
     [Header("Centralized Settings")]
     public float hexRadius = 1f; // ONLY place radius is defined

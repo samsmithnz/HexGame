@@ -6,64 +6,37 @@ public class CameraControl : MonoBehaviour
     public float moveSpeed = 10f;
     public float panSpeed = 10f; // Speed for edge panning
     public int edgeSize = 20; // Pixels from edge to start panning
-    public float minX = -28f;
-    public float maxX = 0f;
-    public float minZ = -28f;
-    public float maxZ = 0f;
-    public float isoAngle = 30f; // Degrees from ground
-    public float isoRotation = 45f; // Yaw rotation for isometric view
+    public float minX = -100f;//-28f;
+    public float maxX = 100f;//0f;
+    public float minZ = -100f;//-28f;
+    public float maxZ = 100f;//0f;
 
     private void Start()
     {
-        // Set isometric angle and rotation
-        transform.rotation = Quaternion.Euler(isoAngle, isoRotation, 0);
+        // Set top-down angle and rotation
+        transform.rotation = Quaternion.Euler(90f, 0f, 0f);
     }
 
     void Update()
     {
+        // Use world axes for top-down camera movement
         Vector3 move = Vector3.zero;
         if (Input.GetKey(KeyCode.W))
         {
-            move += new Vector3(1, 0, 1); // Forward in isometric
+            move += new Vector3(0, 0, 1); // Move forward (up)
         }
         if (Input.GetKey(KeyCode.S))
         {
-            move += new Vector3(-1, 0, -1); // Backward
+            move += new Vector3(0, 0, -1); // Move backward (down)
         }
         if (Input.GetKey(KeyCode.A))
         {
-            move += new Vector3(-1, 0, 1); // Left
+            move += new Vector3(-1, 0, 0); // Move left
         }
         if (Input.GetKey(KeyCode.D))
         {
-            move += new Vector3(1, 0, -1); // Right
+            move += new Vector3(1, 0, 0); // Move right
         }
-
-        //// Edge panning
-        //Vector3 edgeMove = Vector3.zero;
-        //Vector3 mousePos = Input.mousePosition;
-        //if (mousePos.x <= edgeSize)
-        //{
-        //    edgeMove += new Vector3(-1, 0, 1); // Pan left
-        //}
-        //if (mousePos.x >= Screen.width - edgeSize)
-        //{
-        //    edgeMove += new Vector3(1, 0, -1); // Pan right
-        //}
-        //if (mousePos.y <= edgeSize)
-        //{
-        //    edgeMove += new Vector3(-1, 0, -1); // Pan down
-        //}
-        //if (mousePos.y >= Screen.height - edgeSize)
-        //{
-        //    edgeMove += new Vector3(1, 0, 1); // Pan up
-        //}
-
-        //if (edgeMove != Vector3.zero)
-        //{
-        //    edgeMove.Normalize();
-        //    move += edgeMove * (panSpeed / moveSpeed); // Keep panning speed consistent
-        //}
 
         if (move != Vector3.zero)
         {

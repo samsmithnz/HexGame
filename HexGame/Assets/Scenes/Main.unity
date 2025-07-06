@@ -207,7 +207,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
-  m_LocalPosition: {x: -10, y: 10, z: -8.43}
+  m_LocalPosition: {x: 10, y: 10, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -272,12 +272,10 @@ MonoBehaviour:
   moveSpeed: 10
   panSpeed: 10
   edgeSize: 20
-  minX: -28
-  maxX: 0
-  minZ: -28
-  maxZ: 0
-  isoAngle: 30
-  isoRotation: 45
+  minX: -5
+  maxX: 20
+  minZ: 0
+  maxZ: 10
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,7 +429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexTilePrefab: {fileID: 2625415425177298279, guid: cd74b1141fc46874fb249d2de8a4a497, type: 3}
   width: 10
-  height: 10
+  height: 5
   hexRadius: 1
   defaultMaterial: {fileID: 2100000, guid: 3e25851b46d96d5409e0e0dc840e90ba, type: 2}
 --- !u!4 &784380830

@@ -17,5 +17,7 @@ if (condition)
 ```
 
 ## Additional Guidelines
-- Apply this standard consistently throughout the codebase.
-- This improves readability and reduces the risk of bugs during future code modifications.
+- Do not remove comments from any code.
+- Always update the game rules in the help popup when adding new features or changing game mechanics.
+- Don't use the `var` keyword for variable declarations; always specify the type explicitly.
+- We are using Unity 6, so ensure compatibility with that version.
