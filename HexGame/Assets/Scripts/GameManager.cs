@@ -129,8 +129,11 @@ public class GameManager : MonoBehaviour
         {
             if (tile.hexColor == currentPlayer)
             {
-                tile.armyCount++;
-                armiesAwarded++;
+                if (tile.armyCount < 7)
+                {
+                    tile.armyCount++;
+                    armiesAwarded++;
+                }
             }
         }
         if (currentPlayer == HexColor.Blue)
@@ -177,17 +180,27 @@ public class GameManager : MonoBehaviour
         }
         float armyHeight = 0.1f; // cylinder Y scale
         float y = hexHeight + (armyHeight / 2f);
-        // Arrange armies in a circle for visibility
-        float radiusCircle = 0.25f; // radius from center of tile
-        int n = tile.armyCount;
+        int n = Mathf.Min(tile.armyCount, 7); // Max 7 armies visualized
         for (int i = 0; i < n; i++)
         {
-            float angle = (n == 1) ? 0 : (2 * Mathf.PI * i / n);
-            float x = Mathf.Cos(angle) * radiusCircle;
-            float z = Mathf.Sin(angle) * radiusCircle;
+            Vector3 pos;
+            if (i == 0)
+            {
+                // Center
+                pos = new Vector3(0, y, 0);
+            }
+            else
+            {
+                // 6 around the center
+                float angle = 2 * Mathf.PI * (i - 1) / 6f;
+                float radiusCircle = 0.25f;
+                float x = Mathf.Cos(angle) * radiusCircle;
+                float z = Mathf.Sin(angle) * radiusCircle;
+                pos = new Vector3(x, y, z);
+            }
             GameObject army = Instantiate(armyPrefab, tile.transform);
             army.name = "ArmyVisual" + i;
-            army.transform.localPosition = new Vector3(x, y, z);
+            army.transform.localPosition = pos;
             army.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             // Assign a unique material instance for color
             var renderer = army.GetComponent<Renderer>();
@@ -461,8 +474,34 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
+        // Count tiles and armies for each player
+        int blueTiles = 0;
+        int greenTiles = 0;
+        int blueTotalArmies = 0;
+        int greenTotalArmies = 0;
+        int noneTiles = 0;
+        foreach (var tile in allTiles)
+        {
+            if (tile.hexColor == HexColor.Blue)
+            {
+                blueTiles++;
+                blueTotalArmies += tile.armyCount;
+            }
+            else if (tile.hexColor == HexColor.Green)
+            {
+                greenTiles++;
+                greenTotalArmies += tile.armyCount;
+            }
+            else
+            {
+                noneTiles++;
+            }
+        }
+        Debug.Log($"Tiles: Blue={blueTiles}, Green={greenTiles}, None={noneTiles}");
         string playerStr = currentPlayer == HexColor.Blue ? "Blue" : "Green";
         turnText.text = $"Turn {turn}: {playerStr}";
-        armiesText.text = $"Blue Armies: {blueArmies}\nGreen Armies: {greenArmies}";
+        armiesText.text =
+            $"Blue Tiles: {blueTiles}  |  Green Tiles: {greenTiles}\n" +
+            $"Blue Armies: {blueTotalArmies}  |  Green Armies: {greenTotalArmies}";
     }
 }
