@@ -55,38 +55,45 @@ public class HelpPopupManager : MonoBehaviour
         helpText.color = Color.white;
         helpText.alignment = TextAnchor.UpperLeft;
         helpText.text = "HEX GAME RULES:\n\n" +
-                       "OBJECTIVE:\n" +
-                       "• Control territories and build armies\n\n" +
+                       "OBJECTIVE & WINNING:\n" +
+                       "• Control territories and build armies.\n" +
+                       "• If a player has no tiles or no armies, the other player wins.\n" +
+                       "• A popup will appear showing the winner and a 'Play again?' button.\n\n" +
                        "GAMEPLAY:\n" +
-                       "• Two players: Blue and Green\n" +
-                       "• Blue player always goes first\n" +
-                       "• Turn counter increases when Blue's turn begins\n\n" +
+                       "• Two players: Blue and Green.\n" +
+                       "• Blue player always goes first.\n" +
+                       "• Turn counter increases when Blue's turn begins.\n\n" +
                        "STARTING SETUP:\n" +
                        "• Each player starts with 3 adjacent tiles, each with 3 armies.\n" +
                        "• All other tiles are blank.\n\n" +
                        "ARMIES:\n" +
-                       "• At the start of each turn, gain 1 army per tile you control\n" +
-                       "• Armies are represented by colored cylinders on tiles\n\n" +
+                       "• At the start of each turn, gain 1 army per tile you control (max 7 per tile).\n" +
+                       "• Armies are represented by colored cylinders on tiles.\n\n" +
+                       "ATTACKING:\n" +
+                       "• Click your tile with 2 or more armies to select it.\n" +
+                       "• Orange highlight shows tiles you can attack.\n" +
+                       "• When you attack, all but one army move to the new tile.\n" +
+                       "• If your new tile has 2 or more armies, it stays selected and you may attack again.\n\n" +
                        "CONTROLS:\n" +
-                       "• Click on tiles to select and view information\n" +
-                       "• Use 'Next Turn' button to end your turn\n" +
-                       "• Press ESC or click Close to exit this help\n\n" +
+                       "• Click on tiles to select and view information.\n" +
+                       "• Use 'Next Turn' button to end your turn.\n" +
+                       "• Press ESC or click Close to exit this help.\n\n" +
                        "CAMERA:\n" +
-                       "• WASD keys to move camera around the map\n\n" +
+                       "• WASD keys to move camera around the map.\n\n" +
                        "TILE INFORMATION:\n" +
-                       "• Selected tile info appears in top-left panel\n" +
-                       "• Shows tile coordinates, color, and army count\n\n" +
+                       "• Selected tile info appears in top-left panel.\n" +
+                       "• Shows tile coordinates, color, and army count.\n\n" +
                        "VISUAL INDICATORS:\n" +
-                       "• Blue tiles belong to Blue player\n" +
-                       "• Green tiles belong to Green player\n" +
-                       "• Gray tiles are neutral (none)\n" +
-                       "• Yellow highlight shows selected tile\n" +
-                       "• Orange highlight shows attackable tiles\n" +
-                       "• Small cylinders represent armies on tiles\n\n" +
+                       "• Blue tiles belong to Blue player.\n" +
+                       "• Green tiles belong to Green player.\n" +
+                       "• Gray tiles are neutral (none).\n" +
+                       "• Yellow highlight shows selected tile.\n" +
+                       "• Orange highlight shows attackable tiles.\n" +
+                       "• Small cylinders represent armies on tiles.\n\n" +
                        "GAME STATUS:\n" +
-                       "• Current turn and active player shown in top-right\n" +
-                       "• Total army count displayed for each player\n" +
-                       "• Turn advances when Next Turn button is clicked";
+                       "• Current turn and active player shown in top-right.\n" +
+                       "• Total army count displayed for each player.\n" +
+                       "• Turn advances when Next Turn button is clicked.";
         RectTransform helpTextRect = helpText.GetComponent<RectTransform>();
         helpTextRect.anchorMin = new Vector2(0, 0);
         helpTextRect.anchorMax = new Vector2(1, 0.85f);
