@@ -78,7 +78,6 @@ public class HelpPopupManager : MonoBehaviour
                        "• Click on tiles to select and view information.\n" +
                        "• Use 'Next Turn' button to end your turn.\n" +
                        "• Press ESC or click Close to exit this help.\n\n" +
-                       "CAMERA:\n" +
                        "• WASD keys to move camera around the map.\n\n" +
                        "TILE INFORMATION:\n" +
                        "• Selected tile info appears in top-left panel.\n" +
