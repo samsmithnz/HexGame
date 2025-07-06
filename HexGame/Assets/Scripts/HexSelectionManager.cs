@@ -149,6 +149,13 @@ public class HexSelectionManager : MonoBehaviour
         GameManager.Instance.CallUpdateAllArmyVisuals();
         GameManager.Instance.CallUpdateUI();
         
+        // Check win condition after attack
+        GameManager.Instance.CheckWinCondition();
+        if (GameManager.Instance.gameEnded)
+        {
+            return;
+        }
+        
         // Check if the new tile can attack again
         if (target.armyCount >= 2)
         {

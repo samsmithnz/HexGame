@@ -20,6 +20,11 @@ public class GameManager : MonoBehaviour
     private List<HexTile> allTiles = new List<HexTile>();
     private GameObject armyPrefab;
 
+    private GameObject winPopup;
+    private Text winText;
+    private Button playAgainButton;
+    public bool gameEnded = false;
+
     void Awake()
     {
         if (Instance == null)
@@ -245,6 +250,7 @@ public class GameManager : MonoBehaviour
         AwardArmiesToCurrentPlayer();
         UpdateAllArmyVisuals(); // Ensure visuals are updated after awarding armies
         UpdateUI();
+        CheckWinCondition();
     }
 
     private void AwardArmiesToCurrentPlayer()
@@ -517,6 +523,117 @@ public class GameManager : MonoBehaviour
         armiesText.text =
             $"Blue Tiles: {blueTiles}  |  Green Tiles: {greenTiles}\n" +
             $"Blue Armies: {blueTotalArmies}  |  Green Armies: {greenTotalArmies}";
+        // Check win condition after UI update
+        CheckWinCondition();
+    }
+
+    public void CheckWinCondition()
+    {
+        int blueTiles = 0;
+        int greenTiles = 0;
+        int blueTotalArmies = 0;
+        int greenTotalArmies = 0;
+        foreach (HexTile tile in allTiles)
+        {
+            if (tile.hexColor == HexColor.Blue)
+            {
+                blueTiles++;
+                blueTotalArmies += tile.armyCount;
+            }
+            else if (tile.hexColor == HexColor.Green)
+            {
+                greenTiles++;
+                greenTotalArmies += tile.armyCount;
+            }
+        }
+        if (!gameEnded && (blueTiles == 0 || blueTotalArmies == 0))
+        {
+            ShowWinPopup(HexColor.Green);
+        }
+        else if (!gameEnded && (greenTiles == 0 || greenTotalArmies == 0))
+        {
+            ShowWinPopup(HexColor.Blue);
+        }
+    }
+
+    private void ShowWinPopup(HexColor winner)
+    {
+        gameEnded = true;
+        // Create popup if not already created
+        if (winPopup == null)
+        {
+            Canvas canvas = GameObject.Find("GameCanvas").GetComponent<Canvas>();
+            winPopup = new GameObject("WinPopup");
+            winPopup.transform.SetParent(canvas.transform, false);
+            Image popupBg = winPopup.AddComponent<Image>();
+            popupBg.color = new Color(0, 0, 0, 0.7f);
+            RectTransform popupRect = winPopup.GetComponent<RectTransform>();
+            popupRect.anchorMin = new Vector2(0.25f, 0.35f);
+            popupRect.anchorMax = new Vector2(0.75f, 0.65f);
+            popupRect.offsetMin = Vector2.zero;
+            popupRect.offsetMax = Vector2.zero;
+            // Win Text
+            GameObject winTextObj = new GameObject("WinText");
+            winTextObj.transform.SetParent(winPopup.transform, false);
+            winText = winTextObj.AddComponent<Text>();
+            winText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            winText.fontSize = 28;
+            winText.color = Color.white;
+            winText.alignment = TextAnchor.MiddleCenter;
+            RectTransform winTextRect = winText.GetComponent<RectTransform>();
+            winTextRect.anchorMin = new Vector2(0, 0.5f);
+            winTextRect.anchorMax = new Vector2(1, 1);
+            winTextRect.offsetMin = new Vector2(10, -10);
+            winTextRect.offsetMax = new Vector2(-10, -10);
+            // Play Again Button
+            GameObject playAgainObj = new GameObject("PlayAgainButton");
+            playAgainObj.transform.SetParent(winPopup.transform, false);
+            playAgainButton = playAgainObj.AddComponent<Button>();
+            Image btnImage = playAgainObj.AddComponent<Image>();
+            btnImage.color = new Color(0.2f, 0.6f, 1f, 1f);
+            RectTransform btnRect = playAgainObj.GetComponent<RectTransform>();
+            btnRect.anchorMin = new Vector2(0.3f, 0.05f);
+            btnRect.anchorMax = new Vector2(0.7f, 0.35f);
+            btnRect.offsetMin = Vector2.zero;
+            btnRect.offsetMax = Vector2.zero;
+            // Button Text
+            GameObject btnTextObj = new GameObject("PlayAgainText");
+            btnTextObj.transform.SetParent(playAgainObj.transform, false);
+            Text btnText = btnTextObj.AddComponent<Text>();
+            btnText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            btnText.fontSize = 18;
+            btnText.color = Color.white;
+            btnText.alignment = TextAnchor.MiddleCenter;
+            btnText.text = "Play again?";
+            RectTransform btnTextRect = btnText.GetComponent<RectTransform>();
+            btnTextRect.anchorMin = Vector2.zero;
+            btnTextRect.anchorMax = Vector2.one;
+            btnTextRect.offsetMin = Vector2.zero;
+            btnTextRect.offsetMax = Vector2.zero;
+            playAgainButton.onClick.AddListener(RestartGame);
+        }
+        winPopup.SetActive(true);
+        string colorStr = winner == HexColor.Blue ? "Blue" : "Green";
+        winText.text = $"Player {colorStr} wins!";
+    }
+
+    private void HideWinPopup()
+    {
+        if (winPopup != null)
+        {
+            winPopup.SetActive(false);
+        }
+    }
+
+    private void RestartGame()
+    {
+        HideWinPopup();
+        gameEnded = false;
+        turn = 1;
+        currentPlayer = HexColor.Blue;
+        AwardInitialArmies();
+        UpdateAllArmyVisuals();
+        UpdateUI();
     }
 
     // Public methods for HexSelectionManager to access
