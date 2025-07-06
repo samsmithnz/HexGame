@@ -149,13 +149,25 @@ public class HexSelectionManager : MonoBehaviour
         GameManager.Instance.CallUpdateAllArmyVisuals();
         GameManager.Instance.CallUpdateUI();
         
-        // Deselect and clear highlights
-        selectedTile.RestoreColor();
-        selectedTile = null;
-        ClearHighlights();
-        
-        // Update info panel
-        UpdateInfoPanel(target);
+        // Check if the new tile can attack again
+        if (target.armyCount >= 2)
+        {
+            // Deselect old, select new
+            selectedTile.RestoreColor();
+            selectedTile = target;
+            selectedTile.Highlight();
+            ClearHighlights();
+            HighlightAttackableNeighbors(selectedTile);
+            UpdateInfoPanel(selectedTile);
+        }
+        else
+        {
+            // Deselect and clear highlights
+            selectedTile.RestoreColor();
+            selectedTile = null;
+            ClearHighlights();
+            UpdateInfoPanel(target);
+        }
     }
 
     private void CreateInfoPanel()
