@@ -56,43 +56,45 @@ public class HelpPopupManager : MonoBehaviour
         helpText.alignment = TextAnchor.UpperLeft;
         helpText.text = "HEX GAME RULES:\n\n" +
                        "OBJECTIVE & WINNING:\n" +
-                       "• Control territories and build armies.\n" +
-                       "• A player wins when they conquer all tiles.\n" +
-                       "• A popup will appear showing the winner and a 'Play again?' button.\n\n" +
+                       "ï¿½ Control territories and build armies.\n" +
+                       "ï¿½ A player wins when they conquer all tiles.\n" +
+                       "ï¿½ A popup will appear showing the winner and a 'Play again?' button.\n\n" +
                        "GAMEPLAY:\n" +
-                       "• Two players: Blue and Green.\n" +
-                       "• Blue player always goes first.\n" +
-                       "• Turn counter increases when Blue's turn begins.\n\n" +
+                       "ï¿½ Two players: Blue and Green.\n" +
+                       "ï¿½ Blue player always goes first.\n" +
+                       "ï¿½ Turn counter increases when Blue's turn begins.\n\n" +
                        "STARTING SETUP:\n" +
-                       "• Each player starts with 3 adjacent tiles, each with 3 armies.\n" +
-                       "• All other tiles are blank.\n\n" +
+                       "ï¿½ Each player starts with 3 adjacent tiles, each with 3 armies.\n" +
+                       "ï¿½ All other tiles are blank.\n\n" +
                        "ARMIES:\n" +
-                       "• At the start of each turn, gain 1 army per tile you control (max 7 per tile).\n" +
-                       "• Armies are represented by colored cylinders on tiles.\n\n" +
+                       "ï¿½ At the start of each turn, gain 1 army per tile you control (max 7 per tile).\n" +
+                       "ï¿½ Armies are represented by colored cylinders on tiles.\n\n" +
                        "ATTACKING:\n" +
-                       "• Click your tile with 2 or more armies to select it.\n" +
-                       "• Orange highlight shows tiles you can attack.\n" +
-                       "• When you attack, all but one army move to the new tile.\n" +
-                       "• If your new tile has 2 or more armies, it stays selected and you may attack again.\n\n" +
+                       "ï¿½ Click your tile with 2 or more armies to select it.\n" +
+                       "ï¿½ Orange highlight shows tiles you can attack.\n" +
+                       "ï¿½ Combat uses Risk-style dice rolling: each army rolls one die.\n" +
+                       "ï¿½ Higher rolls win. Attacker wins ties go to defender.\n" +
+                       "ï¿½ Winner takes the tile. If attacker wins, surviving armies occupy the tile.\n" +
+                       "ï¿½ If your tile has 2 or more armies after combat, it stays selected for more attacks.\n\n" +
                        "CONTROLS:\n" +
-                       "• Click on tiles to select and view information.\n" +
-                       "• Use 'Next Turn' button to end your turn.\n" +
-                       "• Press ESC or click Close to exit this help.\n\n" +
-                       "• WASD keys to move camera around the map.\n\n" +
+                       "ï¿½ Click on tiles to select and view information.\n" +
+                       "ï¿½ Use 'Next Turn' button to end your turn.\n" +
+                       "ï¿½ Press ESC or click Close to exit this help.\n\n" +
+                       "ï¿½ WASD keys to move camera around the map.\n\n" +
                        "TILE INFORMATION:\n" +
-                       "• Selected tile info appears in top-left panel.\n" +
-                       "• Shows tile coordinates, color, and army count.\n\n" +
+                       "ï¿½ Selected tile info appears in top-left panel.\n" +
+                       "ï¿½ Shows tile coordinates, color, and army count.\n\n" +
                        "VISUAL INDICATORS:\n" +
-                       "• Blue tiles belong to Blue player.\n" +
-                       "• Green tiles belong to Green player.\n" +
-                       "• Gray tiles are neutral (none).\n" +
-                       "• Yellow highlight shows selected tile.\n" +
-                       "• Orange highlight shows attackable tiles.\n" +
-                       "• Small cylinders represent armies on tiles.\n\n" +
+                       "ï¿½ Blue tiles belong to Blue player.\n" +
+                       "ï¿½ Green tiles belong to Green player.\n" +
+                       "ï¿½ Gray tiles are neutral (none).\n" +
+                       "ï¿½ Yellow highlight shows selected tile.\n" +
+                       "ï¿½ Orange highlight shows attackable tiles.\n" +
+                       "ï¿½ Small cylinders represent armies on tiles.\n\n" +
                        "GAME STATUS:\n" +
-                       "• Current turn and active player shown in top-right.\n" +
-                       "• Total army count displayed for each player.\n" +
-                       "• Turn advances when Next Turn button is clicked.";
+                       "ï¿½ Current turn and active player shown in top-right.\n" +
+                       "ï¿½ Total army count displayed for each player.\n" +
+                       "ï¿½ Turn advances when Next Turn button is clicked.";
         RectTransform helpTextRect = helpText.GetComponent<RectTransform>();
         helpTextRect.anchorMin = new Vector2(0, 0);
         helpTextRect.anchorMax = new Vector2(1, 0.85f);

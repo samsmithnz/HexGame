@@ -131,19 +131,44 @@ public class HexSelectionManager : MonoBehaviour
             return;
         }
         
-        // Move all but one army to the target
-        int movingArmies = selectedTile.armyCount - 1;
-        if (movingArmies < 1)
+        // Attacker uses all but one army
+        int attackerArmies = selectedTile.armyCount - 1;
+        if (attackerArmies < 1)
         {
             return;
         }
         
-        // Set target to current player with moving armies
-        target.SetHexColor(GameManager.Instance.currentPlayer, movingArmies);
+        // Defender uses all armies (0 if unoccupied)
+        int defenderArmies = target.armyCount;
         
-        // Leave one army on source
-        selectedTile.armyCount = 1;
-        selectedTile.UpdateTileAppearance();
+        // Resolve combat using Risk-inspired dice system
+        CombatResolver.CombatResult result = CombatResolver.ResolveCombat(attackerArmies, defenderArmies);
+        
+        // Debug output for combat results
+        Debug.Log($"Combat: Attacker {attackerArmies} armies vs Defender {defenderArmies} armies");
+        Debug.Log($"Attacker rolls: [{string.Join(", ", result.attackerRolls)}]");
+        Debug.Log($"Defender rolls: [{string.Join(", ", result.defenderRolls)}]");
+        Debug.Log($"Result: Attacker {result.attackerSurvivors} survivors, Defender {result.defenderSurvivors} survivors");
+        
+        if (result.attackerWins)
+        {
+            // Attacker wins: take the tile with surviving armies
+            target.SetHexColor(GameManager.Instance.currentPlayer, result.attackerSurvivors);
+            
+            // Leave one army on source
+            selectedTile.armyCount = 1;
+            selectedTile.UpdateTileAppearance();
+        }
+        else
+        {
+            // Defender wins: target keeps its color with surviving armies
+            target.armyCount = result.defenderSurvivors;
+            target.UpdateTileAppearance();
+            
+            // Source loses the attacking armies, keeps 1 + any survivors
+            selectedTile.armyCount = 1 + result.attackerSurvivors;
+            selectedTile.UpdateTileAppearance();
+        }
         
         // Update visuals and UI
         GameManager.Instance.CallUpdateAllArmyVisuals();
@@ -156,12 +181,24 @@ public class HexSelectionManager : MonoBehaviour
             return;
         }
         
-        // Check if the new tile can attack again
-        if (target.armyCount >= 2)
+        // Determine which tile to select next (if any)
+        HexTile nextSelectedTile = null;
+        if (result.attackerWins && target.armyCount >= 2)
         {
-            // Deselect old, select new
+            // Attacker won and can continue attacking from new tile
+            nextSelectedTile = target;
+        }
+        else if (!result.attackerWins && selectedTile.armyCount >= 2)
+        {
+            // Attacker lost but still has armies to attack with
+            nextSelectedTile = selectedTile;
+        }
+        
+        if (nextSelectedTile != null)
+        {
+            // Select the tile that can continue attacking
             selectedTile.RestoreColor();
-            selectedTile = target;
+            selectedTile = nextSelectedTile;
             selectedTile.Highlight();
             ClearHighlights();
             HighlightAttackableNeighbors(selectedTile);
@@ -169,7 +206,7 @@ public class HexSelectionManager : MonoBehaviour
         }
         else
         {
-            // Deselect and clear highlights
+            // No more attacks possible, deselect
             selectedTile.RestoreColor();
             selectedTile = null;
             ClearHighlights();
