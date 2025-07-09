@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class HexSelectionManager : MonoBehaviour
 {
@@ -11,6 +13,11 @@ public class HexSelectionManager : MonoBehaviour
     // UI
     private GameObject infoPanel;
     private Text infoText;
+
+    // Battle result popup
+    private GameObject battleResultPopup;
+    private TextMeshProUGUI battleResultText;
+    private Coroutine battleResultCoroutine;
 
     void Awake()
     {
@@ -144,11 +151,15 @@ public class HexSelectionManager : MonoBehaviour
         // Resolve combat using Risk-inspired dice system
         CombatResolver.CombatResult result = CombatResolver.ResolveCombat(attackerArmies, defenderArmies);
         
-        // Debug output for combat results
-        Debug.Log($"Combat: Attacker {attackerArmies} armies vs Defender {defenderArmies} armies");
-        Debug.Log($"Attacker rolls: [{string.Join(", ", result.attackerRolls)}]");
-        Debug.Log($"Defender rolls: [{string.Join(", ", result.defenderRolls)}]");
-        Debug.Log($"Result: Attacker {result.attackerSurvivors} survivors, Defender {result.defenderSurvivors} survivors");
+        // Show popup with battle results only if defender had armies
+        if (defenderArmies > 0)
+        {
+            string battleMsg = $"Attacker: {attackerArmies} vs Defender: {defenderArmies}\n" +
+                $"Attacker rolls: [{string.Join(", ", result.attackerRolls)}]  Defender rolls: [{string.Join(", ", result.defenderRolls)}]\n" +
+                $"Attacker survivors: {result.attackerSurvivors}  Defender survivors: {result.defenderSurvivors}\n" +
+                (result.attackerWins ? "Attacker wins!" : "Defender holds!");
+            ShowBattleResultPopup(battleMsg);
+        }
         
         if (result.attackerWins)
         {
@@ -212,6 +223,63 @@ public class HexSelectionManager : MonoBehaviour
             ClearHighlights();
             UpdateInfoPanel(target);
         }
+    }
+
+    private void ShowBattleResultPopup(string message)
+    {
+        if (battleResultPopup == null)
+        {
+            Canvas canvas = FindFirstObjectByType<Canvas>();
+            battleResultPopup = new GameObject("BattleResultPopup");
+            battleResultPopup.transform.SetParent(canvas.transform, false);
+            Image bg = battleResultPopup.AddComponent<Image>();
+            bg.color = new Color(0, 0, 0, 0.7f);
+            RectTransform rect = battleResultPopup.GetComponent<RectTransform>();
+            rect.anchorMin = new Vector2(0.5f, 0);
+            rect.anchorMax = new Vector2(0.5f, 0);
+            rect.pivot = new Vector2(0.5f, 0);
+            rect.anchoredPosition = new Vector2(0, 60);
+            rect.sizeDelta = new Vector2(420, 60);
+            GameObject textObj = new GameObject("BattleResultText");
+            textObj.transform.SetParent(battleResultPopup.transform, false);
+            battleResultText = textObj.AddComponent<TextMeshProUGUI>();
+            battleResultText.fontSize = 22;
+            battleResultText.color = Color.white;
+            battleResultText.alignment = TextAlignmentOptions.Center;
+            RectTransform textRect = battleResultText.GetComponent<RectTransform>();
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = Vector2.zero;
+            textRect.offsetMax = Vector2.zero;
+        }
+        battleResultPopup.SetActive(true);
+        battleResultText.text = message;
+        battleResultText.alpha = 1f;
+        Image popupBg = battleResultPopup.GetComponent<Image>();
+        popupBg.color = new Color(0, 0, 0, 0.7f);
+        if (battleResultCoroutine != null)
+        {
+            StopCoroutine(battleResultCoroutine);
+        }
+        battleResultCoroutine = StartCoroutine(FadeBattleResultPopup());
+    }
+
+    private IEnumerator FadeBattleResultPopup()
+    {
+        yield return new WaitForSeconds(2f);
+        float fadeTime = 1f;
+        float t = 0f;
+        Image popupBg = battleResultPopup.GetComponent<Image>();
+        Color bgColor = popupBg.color;
+        while (t < fadeTime)
+        {
+            t += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, t / fadeTime);
+            battleResultText.alpha = alpha;
+            popupBg.color = new Color(bgColor.r, bgColor.g, bgColor.b, 0.7f * alpha);
+            yield return null;
+        }
+        battleResultPopup.SetActive(false);
     }
 
     private void CreateInfoPanel()
