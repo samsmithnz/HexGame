@@ -338,11 +338,11 @@ public class GameManager : MonoBehaviour
             renderer.material = new Material(renderer.material);
             if (tile.hexColor == HexColor.Blue)
             {
-                renderer.material.color = Color.blue;
+                renderer.material.color = HexTile.ArmyBlueColor;
             }
             else if (tile.hexColor == HexColor.Green)
             {
-                renderer.material.color = Color.green;
+                renderer.material.color = HexTile.ArmyGreenColor;
             }
         }
     }

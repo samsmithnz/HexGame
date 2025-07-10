@@ -11,6 +11,9 @@ public class HexTile : MonoBehaviour
     public Color highlightColor = Color.yellow;
     public Color attackHighlightColor = new Color(1.0f, 0.5f, 0.0f, 1.0f); // Orange
 
+    public static readonly Color ArmyBlueColor = new Color(0.10f, 0.22f, 0.50f, 1.0f); // Darker blue for armies
+    public static readonly Color ArmyGreenColor = new Color(0.10f, 0.35f, 0.10f, 1.0f); // Darker green for armies
+
     public int armyCount = 0;
 
     private Renderer rend;
