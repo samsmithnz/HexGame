@@ -6,6 +6,9 @@ using TMPro;
 
 public class HexSelectionManager : MonoBehaviour
 {
+    private const string BlueHex = "#2196F3";
+    private const string GreenHex = "#43A047";
+
     private HexTile selectedTile;
     private List<HexTile> highlightedTiles = new List<HexTile>();
     private static HexSelectionManager instance;
@@ -154,8 +157,8 @@ public class HexSelectionManager : MonoBehaviour
         // Show popup with battle results only if defender had armies
         if (defenderArmies > 0)
         {
-            string attackerColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? "#2196F3" : "#43A047";
-            string defenderColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? "#43A047" : "#2196F3";
+            string attackerColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? BlueHex : GreenHex;
+            string defenderColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? GreenHex : BlueHex;
             string resultLine;
             if (result.attackerWins)
             {
