@@ -154,10 +154,24 @@ public class HexSelectionManager : MonoBehaviour
         // Show popup with battle results only if defender had armies
         if (defenderArmies > 0)
         {
+            string attackerColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? "#2196F3" : "#43A047";
+            string defenderColorHex = GameManager.Instance.currentPlayer == HexColor.Blue ? "#43A047" : "#2196F3";
+            string resultLine;
+            if (result.attackerWins)
+            {
+                resultLine = $"<color={attackerColorHex}>{GameManager.Instance.currentPlayer} wins!</color>";
+            }
+            else
+            {
+                // Defender color is the opposite of current player
+                HexColor defenderColor = GameManager.Instance.currentPlayer == HexColor.Blue ? HexColor.Green : HexColor.Blue;
+                string defenderName = defenderColor.ToString();
+                resultLine = $"<color={defenderColorHex}>{defenderName} holds!</color>";
+            }
             string battleMsg = $"Attacker: {attackerArmies} vs Defender: {defenderArmies}\n" +
                 $"Attacker rolls: [{string.Join(", ", result.attackerRolls)}]  Defender rolls: [{string.Join(", ", result.defenderRolls)}]\n" +
                 $"Attacker survivors: {result.attackerSurvivors}  Defender survivors: {result.defenderSurvivors}\n" +
-                (result.attackerWins ? "Attacker wins!" : "Defender holds!");
+                resultLine;
             ShowBattleResultPopup(battleMsg);
         }
         
@@ -239,7 +253,7 @@ public class HexSelectionManager : MonoBehaviour
             rect.anchorMax = new Vector2(0.5f, 0);
             rect.pivot = new Vector2(0.5f, 0);
             rect.anchoredPosition = new Vector2(0, 60);
-            rect.sizeDelta = new Vector2(420, 60);
+            rect.sizeDelta = new Vector2(420, 140); // Increased height for 5 lines
             GameObject textObj = new GameObject("BattleResultText");
             textObj.transform.SetParent(battleResultPopup.transform, false);
             battleResultText = textObj.AddComponent<TextMeshProUGUI>();
