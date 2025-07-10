@@ -49,7 +49,6 @@ public class GameManager : MonoBehaviour
         
         // Move tile-dependent initialization to Start() to ensure grid is generated first
         FindAllTiles();
-        Debug.Log($"Found {allTiles.Count} tiles after grid generation");
         CreateArmyPrefab();
         AwardInitialArmies();
         UpdateAllArmyVisuals();
@@ -70,24 +69,6 @@ public class GameManager : MonoBehaviour
         allTiles.Clear();
         // Use the Unity 6+ API to find all HexTile components, including inactive ones
         allTiles.AddRange(Object.FindObjectsByType<HexTile>(FindObjectsInactive.Include, FindObjectsSortMode.None));
-        Debug.Log($"FindAllTiles found {allTiles.Count} HexTile components");
-        
-        // Additional debug: check what objects exist in the scene
-        GameObject[] allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        Debug.Log($"Total GameObjects in scene: {allGameObjects.Length}");
-        
-        // Check specifically for objects with HexTile_ in their name
-        int hexTileNamedObjects = 0;
-        foreach (GameObject go in allGameObjects)
-        {
-            if (go.name.Contains("HexTile_"))
-            {
-                hexTileNamedObjects++;
-                HexTile hexTileComponent = go.GetComponent<HexTile>();
-                Debug.Log($"Found {go.name} - HexTile component: {(hexTileComponent != null ? "YES" : "NO")}");
-            }
-        }
-        Debug.Log($"Found {hexTileNamedObjects} objects with 'HexTile_' in name");
     }
 
     private void CreateArmyPrefab()
@@ -238,6 +219,12 @@ public class GameManager : MonoBehaviour
 
     public void NextTurn()
     {
+        // Use the static instance instead of FindFirstObjectByType
+        if (HexSelectionManager.Instance != null)
+        {
+            HexSelectionManager.Instance.ClearSelectionAndHighlights();
+        }
+        
         if (currentPlayer == HexColor.Green)
         {
             currentPlayer = HexColor.Blue;
@@ -247,6 +234,7 @@ public class GameManager : MonoBehaviour
         {
             currentPlayer = HexColor.Green;
         }
+        
         AwardArmiesToCurrentPlayer();
         UpdateAllArmyVisuals(); // Ensure visuals are updated after awarding armies
         UpdateUI();
@@ -517,7 +505,6 @@ public class GameManager : MonoBehaviour
                 noneTiles++;
             }
         }
-        Debug.Log($"Tiles: Blue={blueTiles}, Green={greenTiles}, None={noneTiles}");
         string playerStr = currentPlayer == HexColor.Blue ? "Blue" : "Green";
         turnText.text = $"Turn {turn}: {playerStr}";
         armiesText.text =

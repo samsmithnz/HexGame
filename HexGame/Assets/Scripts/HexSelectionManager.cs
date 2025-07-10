@@ -13,6 +13,11 @@ public class HexSelectionManager : MonoBehaviour
     private List<HexTile> highlightedTiles = new List<HexTile>();
     private static HexSelectionManager instance;
 
+    public static HexSelectionManager Instance 
+    { 
+        get { return instance; } 
+    }
+
     // UI
     private GameObject infoPanel;
     private Text infoText;
@@ -141,6 +146,16 @@ public class HexSelectionManager : MonoBehaviour
             return;
         }
         
+        // Additional validation: ensure selectedTile belongs to current player
+        if (selectedTile.hexColor != GameManager.Instance.currentPlayer)
+        {
+            // Clear invalid selection
+            selectedTile.RestoreColor();
+            selectedTile = null;
+            ClearHighlights();
+            return;
+        }
+        
         // Attacker uses all but one army
         int attackerArmies = selectedTile.armyCount - 1;
         if (attackerArmies < 1)
@@ -211,21 +226,27 @@ public class HexSelectionManager : MonoBehaviour
         
         // Determine which tile to select next (if any)
         HexTile nextSelectedTile = null;
-        if (result.attackerWins && target.armyCount >= 2)
+        int nextSelectedTileArmies = 0;
+        if (result.attackerWins)
         {
-            // Attacker won and can continue attacking from new tile
             nextSelectedTile = target;
+            nextSelectedTileArmies = target.armyCount;
         }
-        else if (!result.attackerWins && selectedTile.armyCount >= 2)
+        else if (!result.attackerWins)
         {
-            // Attacker lost but still has armies to attack with
             nextSelectedTile = selectedTile;
+            nextSelectedTileArmies = selectedTile.armyCount;
         }
-        
-        if (nextSelectedTile != null)
+
+        // Always restore the current selected tile color first
+        if (selectedTile != null)
+        {
+            selectedTile.RestoreColor();
+        }
+
+        if (nextSelectedTile != null && nextSelectedTileArmies >= 2)
         {
             // Select the tile that can continue attacking
-            selectedTile.RestoreColor();
             selectedTile = nextSelectedTile;
             selectedTile.Highlight();
             ClearHighlights();
@@ -235,7 +256,6 @@ public class HexSelectionManager : MonoBehaviour
         else
         {
             // No more attacks possible, deselect
-            selectedTile.RestoreColor();
             selectedTile = null;
             ClearHighlights();
             UpdateInfoPanel(target);
@@ -350,5 +370,43 @@ public class HexSelectionManager : MonoBehaviour
         string color = tile.hexColor.ToString();
         int armies = tile.armyCount;
         infoText.text = $"Tile: {coords}\nColor: {color}\nArmies: {armies}";
+    }
+
+    public void ClearSelectionAndHighlights()
+    {
+        // Restore color for all highlighted tiles
+        for (int i = 0; i < highlightedTiles.Count; i++)
+        {
+            if (highlightedTiles[i] != null)
+            {
+                highlightedTiles[i].RestoreColor();
+            }
+        }
+        highlightedTiles.Clear();
+        
+        // Restore color for selected tile
+        if (selectedTile != null)
+        {
+            selectedTile.RestoreColor();
+        }
+        selectedTile = null;
+        
+        // Failsafe: restore color for all tiles except selected
+        List<HexTile> allTiles = GameManager.Instance != null ? GameManager.Instance.GetAllTiles() : null;
+        if (allTiles != null)
+        {
+            for (int i = 0; i < allTiles.Count; i++)
+            {
+                HexTile tile = allTiles[i];
+                if (tile != null && tile != selectedTile)
+                {
+                    tile.RestoreColor();
+                }
+            }
+        }
+        if (infoPanel != null)
+        {
+            infoText.text = "No tile selected";
+        }
     }
 }

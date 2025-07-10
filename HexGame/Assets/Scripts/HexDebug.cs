@@ -8,28 +8,28 @@ public class HexDebug : MonoBehaviour
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         HexagonMesh hexagonMesh = GetComponent<HexagonMesh>();
         
-        Debug.Log($"=== HEX DEBUG: {gameObject.name} ===");
-        Debug.Log("MeshFilter: " + (meshFilter ? "OK" : "Missing"));
-        Debug.Log("MeshRenderer: " + (meshRenderer ? "OK" : "Missing"));
-        Debug.Log("HexagonMesh: " + (hexagonMesh ? "OK" : "Missing"));
-        Debug.Log("Material: " + (meshRenderer && meshRenderer.material ? meshRenderer.material.name : "Missing"));
+        Debug.Log($"[HexDebug.Start] === HEX DEBUG: {gameObject.name} ===");
+        Debug.Log($"[HexDebug.Start] MeshFilter: " + (meshFilter ? "OK" : "Missing"));
+        Debug.Log($"[HexDebug.Start] MeshRenderer: " + (meshRenderer ? "OK" : "Missing"));
+        Debug.Log($"[HexDebug.Start] HexagonMesh: " + (hexagonMesh ? "OK" : "Missing"));
+        Debug.Log($"[HexDebug.Start] Material: " + (meshRenderer && meshRenderer.material ? meshRenderer.material.name : "Missing"));
         
         if (meshFilter && meshFilter.mesh)
         {
-            Debug.Log($"Vertices: {meshFilter.mesh.vertexCount}");
-            Debug.Log($"Triangles: {meshFilter.mesh.triangles.Length / 3}");
-            Debug.Log($"Mesh Bounds: {meshFilter.mesh.bounds}");
-            Debug.Log($"Triangle Indices: [{string.Join(", ", meshFilter.mesh.triangles)}]");
+            Debug.Log($"[HexDebug.Start] Vertices: {meshFilter.mesh.vertexCount}");
+            Debug.Log($"[HexDebug.Start] Triangles: {meshFilter.mesh.triangles.Length / 3}");
+            Debug.Log($"[HexDebug.Start] Mesh Bounds: {meshFilter.mesh.bounds}");
+            Debug.Log($"[HexDebug.Start] Triangle Indices: [{string.Join(", ", meshFilter.mesh.triangles)}]");
         }
         else
         {
-            Debug.Log("Vertices: No mesh");
+            Debug.Log("[HexDebug.Start] Vertices: No mesh");
         }
 
         // Output the world position of this hex
-        Debug.Log($"World Position: {transform.position}");
-        Debug.Log($"Local Scale: {transform.localScale}");
+        Debug.Log($"[HexDebug.Start] World Position: {transform.position}");
+        Debug.Log($"[HexDebug.Start] Local Scale: {transform.localScale}");
         
-        Debug.Log("=== END HEX DEBUG ===");
+        Debug.Log("[HexDebug.Start] === END HEX DEBUG ===");
     }
 }
