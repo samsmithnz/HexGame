@@ -226,38 +226,36 @@ public class HexSelectionManager : MonoBehaviour
         
         // Determine which tile to select next (if any)
         HexTile nextSelectedTile = null;
-        int nextSelectedTileArmies = 0;
-        if (result.attackerWins)
+        if (result.attackerWins && target.armyCount >= 2)
         {
+            // Attacker won and new tile has 2+ armies - select the conquered tile
             nextSelectedTile = target;
-            nextSelectedTileArmies = target.armyCount;
         }
-        else if (!result.attackerWins)
+        else if (!result.attackerWins && selectedTile.armyCount >= 2)
         {
+            // Attacker lost but original tile still has 2+ armies - keep it selected
             nextSelectedTile = selectedTile;
-            nextSelectedTileArmies = selectedTile.armyCount;
         }
 
-        // Always restore the current selected tile color first
+        // Clear the current selection first
         if (selectedTile != null)
         {
             selectedTile.RestoreColor();
         }
+        selectedTile = null;
+        ClearHighlights();
 
-        if (nextSelectedTile != null && nextSelectedTileArmies >= 2)
+        // Set up the next selection if there is one
+        if (nextSelectedTile != null)
         {
-            // Select the tile that can continue attacking
             selectedTile = nextSelectedTile;
             selectedTile.Highlight();
-            ClearHighlights();
             HighlightAttackableNeighbors(selectedTile);
             UpdateInfoPanel(selectedTile);
         }
         else
         {
-            // No more attacks possible, deselect
-            selectedTile = null;
-            ClearHighlights();
+            // No tile to select, update info panel to show the target
             UpdateInfoPanel(target);
         }
     }
