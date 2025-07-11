@@ -115,10 +115,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e39b3cde45f057c42b097dbdcaad308c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 0
-  grassColor: {r: 0, g: 1, b: 0, a: 1}
-  waterColor: {r: 0, g: 0, b: 1, a: 1}
+  hexColor: 0
+  noneColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  blueColor: {r: 0.11764706, g: 0.5647059, b: 1, a: 1}
+  greenColor: {r: 0.011764706, g: 0.7529412, b: 0.2901961, a: 1}
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  attackHighlightColor: {r: 1, g: 0.62110686, b: 0, a: 1}
+  armyCount: 0
 --- !u!114 &1246071398033076648
 MonoBehaviour:
   m_ObjectHideFlags: 0

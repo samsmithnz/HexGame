@@ -6,8 +6,8 @@ public class HexTile : MonoBehaviour
 {
     public HexColor hexColor = HexColor.None;
     public Color noneColor = Color.gray;
-    public Color blueColor = Color.blue;
-    public Color greenColor = Color.green;
+    public Color blueColor = new Color(0.6f, 0.8f, 1.0f, 1.0f); // Light blue
+    public Color greenColor = new Color(0.7f, 1.0f, 0.7f, 1.0f); // Light green
     public Color highlightColor = Color.yellow;
     public Color attackHighlightColor = new Color(1.0f, 0.5f, 0.0f, 1.0f); // Orange
 

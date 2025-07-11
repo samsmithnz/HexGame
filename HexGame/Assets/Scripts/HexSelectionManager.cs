@@ -189,8 +189,10 @@ public class HexSelectionManager : MonoBehaviour
             string battleMsg = $"Attacker: {attackerArmies} vs Defender: {defenderArmies}\n" +
                 $"Attacker rolls: [{string.Join(", ", result.attackerRolls)}]  Defender rolls: [{string.Join(", ", result.defenderRolls)}]\n" +
                 $"Attacker survivors: {result.attackerSurvivors}  Defender survivors: {result.defenderSurvivors}\n" +
+                $"Attacker casualties: {attackerArmies - result.attackerSurvivors}  Defender casualties: {defenderArmies - result.defenderSurvivors}\n" +
                 resultLine;
             ShowBattleResultPopup(battleMsg);
+            Debug.Log($"[HexSelectionManager.AttackTile] Battle Result: {battleMsg}");
         }
         
         if (result.attackerWins)

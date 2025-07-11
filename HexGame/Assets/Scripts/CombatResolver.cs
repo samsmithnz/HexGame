@@ -36,6 +36,7 @@ public class CombatResolver
         int battles = Mathf.Min(attackerRolls.Count, defenderRolls.Count);
         for (int i = 0; i < battles; i++)
         {
+            // Defender wins ties: if defender's roll is higher or equal, attacker loses
             if (attackerRolls[i] > defenderRolls[i])
             {
                 defenderLosses++;
