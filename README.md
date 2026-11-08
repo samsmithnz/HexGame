@@ -1,13 +1,30 @@
 # HexGame
 
+## Setup, build, and tests
+
+- Install **Unity 6000.2.12f1** with Unity Hub and activate a Unity license. This is the version currently pinned in `HexGame/ProjectSettings/ProjectVersion.txt`; the issue description's 6000.0.40f1 does not match the repository. No editor or package upgrade was made here.
+- Open the `HexGame` directory as a project. Open `Assets/Scenes/Main.unity` to play in the editor.
+- Install the desired platform's Unity build support module. In **File > Build Profiles**, select the target and build; the enabled scene is `Assets/Scenes/Main.unity`.
+- In **Window > General > Test Runner**, select **PlayMode** and run all tests. The Unity Test Framework is already listed in the package manifest.
+- Alternatively, with a licensed editor, run (replace the editor path and use an absolute project path):
+
+  ```sh
+  /path/to/Unity -batchmode -projectPath /absolute/path/to/HexGame/HexGame \
+    -runTests -testPlatform PlayMode -testResults /tmp/hexgame-results.xml -logFile /tmp/hexgame-tests.log
+  ```
+
+Unity 6000.2.12f1, the build, PlayMode tests, and interactive gameplay have **not** been verified in this environment: the Unity editor and license were unavailable. No build target was tested. Verify them on a licensed installation before relying on this baseline.
+
+For a manual smoke check, start the scene, select a tile with at least two armies, attack a highlighted neutral or enemy tile, end a turn, eliminate the other player, and use **Play again?**. Confirm that selection and turns do not continue behind the victory popup and that the restarted board is playable. The selection handler was moved from the tile prefab to the scene to prevent multiple handlers processing each click; UI clicks no longer select tiles underneath, and victory now blocks input until restart.
+
 ## Game Design Document
 
 ### Overview
 HexGame is a turn-based strategy game built in Unity 6 that combines hex-based grid gameplay with army management and territorial conquest mechanics inspired by classic board games like Risk. Players compete to control territories, manage armies, and defeat opponents through strategic combat.
 
 ### Game Objectives
-- **Victory Condition**: Control all tiles on the map
-- **Defeat Condition**: Lose all controlled tiles
+- **Victory Condition**: Eliminate all opponents; neutral tiles may remain.
+- **Defeat Condition**: Lose all controlled tiles or all armies.
 
 ### Core Gameplay Mechanics
 
@@ -64,7 +81,7 @@ The combat system uses a Risk-inspired dice-rolling mechanism with all-at-once r
   4. For each pair:
      - If attacker's die > defender's die: defender loses an army
      - If attacker's die ≤ defender's die: attacker loses an army
-  5. Extra unpaired dice are resolved against default values
+  5. Each extra unpaired die causes one loss to the opposing side
   6. Side with most remaining armies wins
 
 - **Victory Handling**: 
@@ -73,7 +90,7 @@ The combat system uses a Risk-inspired dice-rolling mechanism with all-at-once r
   - Game checks for win/loss conditions after each battle
 
 #### 7. AI System
-**Status**: 🔄 In Progress
+**Status**: Planned; no computer opponent is implemented.
 
 The AI system is designed to provide challenging computer opponents with varying difficulty levels:
 
@@ -124,16 +141,16 @@ The AI system is designed to provide challenging computer opponents with varying
 ### Planned Features
 
 #### AI Opponents
-- ✅ Design AI decision-making logic for team moves
-- ✅ Implement AI difficulty settings (Easy, Medium, Hard)
-- ✅ Implement chance-based decision making
-- 🔄 Integrate AI into team turn flow
-- 🔄 Test and tune AI behavior and difficulty odds
+- [ ] Design AI decision-making logic for team moves (#20)
+- [ ] Implement AI difficulty settings (#21)
+- [ ] Implement chance-based decision making (#22)
+- [ ] Integrate AI into team turn flow (#23)
+- [ ] Test and tune AI behavior and difficulty odds (#27)
 
 #### Combat Refinement
 - ✅ Implement Risk-inspired combat resolution
 - ✅ Handle tile capture and army movement
-- ✅ Simple attack resolution: army vs. army comparison
+- Issue #14 describes a different simple army-comparison rule; the existing game uses the dice-based combat above.
 
 ### Development History
 
@@ -142,7 +159,7 @@ The game was developed iteratively with the following major milestones:
 1. **Foundation** (Issues #1-3): Camera controller, hex tile prefab, and grid generation
 2. **Interaction** (Issues #4-5): Tile selection and basic UI overlay  
 3. **Gameplay Core** (Issues #9, #11-12): Army representation, army generation, and attacking
-4. **Combat System** (Issues #14-15, #28): Attack resolution, tile capture, and dice-based combat
+4. **Combat System** (Issues #15, #28): Attack resolution, tile capture, and dice-based combat
 5. **Win Conditions** (Issue #18): Victory and defeat condition checking
 6. **Polish** (Issue #19): Turn tracking, army counting, and turn management
 7. **AI Development** (Issues #20-23, #27): AI system design and implementation (ongoing)

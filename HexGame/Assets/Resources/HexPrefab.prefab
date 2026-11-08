@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 1983145929987875505}
   - component: {fileID: 2644245612561792155}
   - component: {fileID: 1246071398033076648}
-  - component: {fileID: 3184044957528307992}
   m_Layer: 0
   m_Name: HexPrefab
   m_TagString: Untagged
@@ -132,17 +131,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a36f44d8c05214942b08601675cc3a15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &3184044957528307992
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2625415425177298279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d87a9d3e869e0114b8377bb36d68b670, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

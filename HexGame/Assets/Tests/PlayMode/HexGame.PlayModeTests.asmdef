@@ -1,0 +1,10 @@
+{
+    "name": "HexGame.PlayModeTests",
+    "references": [
+        "HexGame",
+        "Unity.ugui"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

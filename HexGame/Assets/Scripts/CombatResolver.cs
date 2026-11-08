@@ -17,13 +17,18 @@ public class CombatResolver
     
     public static CombatResult ResolveCombat(int attackerArmies, int defenderArmies)
     {
+        return ResolveCombat(attackerArmies, defenderArmies, () => Random.Range(1, DIE_SIDES + 1));
+    }
+
+    public static CombatResult ResolveCombat(int attackerArmies, int defenderArmies, System.Func<int> rollDie)
+    {
         // Cap dice to reasonable maximum
         int attackerDice = Mathf.Min(attackerArmies, MAX_DICE);
         int defenderDice = Mathf.Min(defenderArmies, MAX_DICE);
         
         // Roll dice for both sides
-        List<int> attackerRolls = RollDice(attackerDice);
-        List<int> defenderRolls = RollDice(defenderDice);
+        List<int> attackerRolls = RollDice(attackerDice, rollDie);
+        List<int> defenderRolls = RollDice(defenderDice, rollDie);
         
         // Sort rolls in descending order
         attackerRolls.Sort((a, b) => b.CompareTo(a));
@@ -75,12 +80,12 @@ public class CombatResolver
         };
     }
     
-    private static List<int> RollDice(int count)
+    private static List<int> RollDice(int count, System.Func<int> rollDie)
     {
         List<int> rolls = new List<int>();
         for (int i = 0; i < count; i++)
         {
-            rolls.Add(Random.Range(1, DIE_SIDES + 1));
+            rolls.Add(rollDie());
         }
         return rolls;
     }
