@@ -408,6 +408,7 @@ GameObject:
   - component: {fileID: 784380830}
   - component: {fileID: 784380829}
   - component: {fileID: 784380831}
+  - component: {fileID: 784380832}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -463,6 +464,18 @@ MonoBehaviour:
   blueArmies: 1
   greenArmies: 1
   turn: 1
+--- !u!114 &784380832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784380828}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d87a9d3e869e0114b8377bb36d68b670, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

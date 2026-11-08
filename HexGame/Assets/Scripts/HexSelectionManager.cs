@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class HexSelectionManager : MonoBehaviour
@@ -35,6 +36,12 @@ public class HexSelectionManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance == null || GameManager.Instance.gameEnded ||
+            (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()))
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -44,44 +51,49 @@ public class HexSelectionManager : MonoBehaviour
                 HexTile tile = hit.collider.GetComponent<HexTile>();
                 if (tile != null)
                 {
-                    // If clicking a highlighted attack tile, perform attack
-                    if (highlightedTiles.Contains(tile))
-                    {
-                        AttackTile(tile);
-                        return;
-                    }
-
-                    // Only allow selecting a tile if:
-                    // - It is owned by the current player
-                    // - It has 2 or more armies
-                    if (tile.hexColor == GameManager.Instance.currentPlayer && tile.armyCount >= 2)
-                    {
-                        // Clear previous selection and highlights
-                        if (selectedTile != null)
-                        {
-                            selectedTile.RestoreColor();
-                        }
-                        ClearHighlights();
-                        
-                        // Select new tile
-                        tile.Highlight();
-                        selectedTile = tile;
-                        UpdateInfoPanel(tile);
-                        HighlightAttackableNeighbors(tile);
-                    }
-                    else
-                    {
-                        // Deselect if clicking an invalid tile
-                        if (selectedTile != null)
-                        {
-                            selectedTile.RestoreColor();
-                            selectedTile = null;
-                        }
-                        ClearHighlights();
-                        UpdateInfoPanel(tile);
-                    }
+                    HandleTileClick(tile);
                 }
             }
+        }
+    }
+
+    private void HandleTileClick(HexTile tile)
+    {
+        // If clicking a highlighted attack tile, perform attack
+        if (highlightedTiles.Contains(tile))
+        {
+            AttackTile(tile);
+            return;
+        }
+
+        // Only allow selecting a tile if:
+        // - It is owned by the current player
+        // - It has 2 or more armies
+        if (tile.hexColor == GameManager.Instance.currentPlayer && tile.armyCount >= 2)
+        {
+            // Clear previous selection and highlights
+            if (selectedTile != null)
+            {
+                selectedTile.RestoreColor();
+            }
+            ClearHighlights();
+                        
+            // Select new tile
+            tile.Highlight();
+            selectedTile = tile;
+            UpdateInfoPanel(tile);
+            HighlightAttackableNeighbors(tile);
+        }
+        else
+        {
+            // Deselect if clicking an invalid tile
+            if (selectedTile != null)
+            {
+                selectedTile.RestoreColor();
+                selectedTile = null;
+            }
+            ClearHighlights();
+            UpdateInfoPanel(tile);
         }
     }
 

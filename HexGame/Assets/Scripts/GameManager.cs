@@ -219,6 +219,11 @@ public class GameManager : MonoBehaviour
 
     public void NextTurn()
     {
+        if (gameEnded)
+        {
+            return;
+        }
+
         // Use the static instance instead of FindFirstObjectByType
         if (HexSelectionManager.Instance != null)
         {
@@ -614,6 +619,10 @@ public class GameManager : MonoBehaviour
 
     private void RestartGame()
     {
+        if (HexSelectionManager.Instance != null)
+        {
+            HexSelectionManager.Instance.ClearSelectionAndHighlights();
+        }
         HideWinPopup();
         gameEnded = false;
         turn = 1;

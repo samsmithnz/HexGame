@@ -1,0 +1,7 @@
+{
+    "name": "HexGame",
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.ugui"
+    ]
+}
