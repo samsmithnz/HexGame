@@ -97,7 +97,7 @@ public class HelpPopupManager : MonoBehaviour
         helpText.text = "HEX GAME RULES:\n\n" +
                        "OBJECTIVE & WINNING:\n" +
                        "• Control territories and build armies.\n" +
-                       "• A player wins when they conquer all tiles.\n" +
+                       "• Eliminate all opponents to win; neutral tiles may remain.\n" +
                        "• A popup will appear showing the winner and a 'Play again?' button.\n\n" +
                        "GAMEPLAY:\n" +
                        "• Two players: Blue and Green.\n" +
